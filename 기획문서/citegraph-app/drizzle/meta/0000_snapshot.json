@@ -1,0 +1,597 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "31906433-d0fd-4b07-a80b-0ad068a8842f",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "audit_evidence": {
+      "name": "audit_evidence",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "finding_id": {
+          "name": "finding_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evidence_code": {
+          "name": "evidence_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "field": {
+          "name": "field",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "excerpt": {
+          "name": "excerpt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "ux_audit_evidence_item": {
+          "name": "ux_audit_evidence_item",
+          "columns": [
+            "finding_id",
+            "evidence_code",
+            "field"
+          ],
+          "isUnique": true
+        },
+        "idx_audit_evidence_finding": {
+          "name": "idx_audit_evidence_finding",
+          "columns": [
+            "finding_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "audit_evidence_finding_id_audit_findings_id_fk": {
+          "name": "audit_evidence_finding_id_audit_findings_id_fk",
+          "tableFrom": "audit_evidence",
+          "tableTo": "audit_findings",
+          "columnsFrom": [
+            "finding_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "audit_findings": {
+      "name": "audit_findings",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "audit_result_id": {
+          "name": "audit_result_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rule_id": {
+          "name": "rule_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "score_type": {
+          "name": "score_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "weight": {
+          "name": "weight",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "result": {
+          "name": "result",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recommendation": {
+          "name": "recommendation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "ux_audit_findings_rule": {
+          "name": "ux_audit_findings_rule",
+          "columns": [
+            "audit_result_id",
+            "rule_id"
+          ],
+          "isUnique": true
+        },
+        "idx_audit_findings_result": {
+          "name": "idx_audit_findings_result",
+          "columns": [
+            "audit_result_id"
+          ],
+          "isUnique": false
+        },
+        "idx_audit_findings_rule": {
+          "name": "idx_audit_findings_rule",
+          "columns": [
+            "rule_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "audit_findings_audit_result_id_audit_results_id_fk": {
+          "name": "audit_findings_audit_result_id_audit_results_id_fk",
+          "tableFrom": "audit_findings",
+          "tableTo": "audit_results",
+          "columnsFrom": [
+            "audit_result_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "ck_audit_findings_score_type": {
+          "name": "ck_audit_findings_score_type",
+          "value": "\"audit_findings\".\"score_type\" IN ('SEO', 'GEO')"
+        },
+        "ck_audit_findings_result": {
+          "name": "ck_audit_findings_result",
+          "value": "\"audit_findings\".\"result\" IN ('PASS', 'WARN', 'FAIL')"
+        },
+        "ck_audit_findings_weight": {
+          "name": "ck_audit_findings_weight",
+          "value": "\"audit_findings\".\"weight\" >= 0"
+        }
+      }
+    },
+    "audit_results": {
+      "name": "audit_results",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "normalized_url": {
+          "name": "normalized_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "final_url": {
+          "name": "final_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ruleset_version": {
+          "name": "ruleset_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "engine_version": {
+          "name": "engine_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "html_hash": {
+          "name": "html_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "input_hash": {
+          "name": "input_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "http_status": {
+          "name": "http_status",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evaluation_duration_ms": {
+          "name": "evaluation_duration_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "seo_score": {
+          "name": "seo_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "geo_score": {
+          "name": "geo_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "extracted_json": {
+          "name": "extracted_json",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "extracted_truncated": {
+          "name": "extracted_truncated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "extracted_bytes": {
+          "name": "extracted_bytes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "ux_audit_results_cache": {
+          "name": "ux_audit_results_cache",
+          "columns": [
+            "normalized_url",
+            "ruleset_version",
+            "engine_version",
+            "input_hash"
+          ],
+          "isUnique": true
+        },
+        "idx_audit_results_url_created": {
+          "name": "idx_audit_results_url_created",
+          "columns": [
+            "normalized_url",
+            "created_at"
+          ],
+          "isUnique": false
+        },
+        "idx_audit_results_created": {
+          "name": "idx_audit_results_created",
+          "columns": [
+            "created_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "ck_audit_results_status": {
+          "name": "ck_audit_results_status",
+          "value": "\"audit_results\".\"status\" IN ('SUCCESS', 'PARTIAL')"
+        },
+        "ck_audit_results_scores": {
+          "name": "ck_audit_results_scores",
+          "value": "\"audit_results\".\"seo_score\" BETWEEN 0 AND 100 AND \"audit_results\".\"geo_score\" BETWEEN 0 AND 100"
+        }
+      }
+    },
+    "audit_runs": {
+      "name": "audit_runs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "audit_result_id": {
+          "name": "audit_result_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "requested_url": {
+          "name": "requested_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "actor_key": {
+          "name": "actor_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cache_hit": {
+          "name": "cache_hit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "error_code": {
+          "name": "error_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "duration_ms": {
+          "name": "duration_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requested_at": {
+          "name": "requested_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_audit_runs_result": {
+          "name": "idx_audit_runs_result",
+          "columns": [
+            "audit_result_id"
+          ],
+          "isUnique": false
+        },
+        "idx_audit_runs_cursor": {
+          "name": "idx_audit_runs_cursor",
+          "columns": [
+            "requested_at",
+            "id"
+          ],
+          "isUnique": false
+        },
+        "idx_audit_runs_actor_cursor": {
+          "name": "idx_audit_runs_actor_cursor",
+          "columns": [
+            "actor_key",
+            "requested_at",
+            "id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "audit_runs_audit_result_id_audit_results_id_fk": {
+          "name": "audit_runs_audit_result_id_audit_results_id_fk",
+          "tableFrom": "audit_runs",
+          "tableTo": "audit_results",
+          "columnsFrom": [
+            "audit_result_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "ck_audit_runs_status": {
+          "name": "ck_audit_runs_status",
+          "value": "\"audit_runs\".\"status\" IN ('SUCCESS', 'FAILED')"
+        }
+      }
+    },
+    "audit_scores": {
+      "name": "audit_scores",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "audit_result_id": {
+          "name": "audit_result_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "score_type": {
+          "name": "score_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category_name": {
+          "name": "category_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "score": {
+          "name": "score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "max_score": {
+          "name": "max_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "ux_audit_scores_category": {
+          "name": "ux_audit_scores_category",
+          "columns": [
+            "audit_result_id",
+            "score_type",
+            "category_name"
+          ],
+          "isUnique": true
+        },
+        "idx_audit_scores_result": {
+          "name": "idx_audit_scores_result",
+          "columns": [
+            "audit_result_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "audit_scores_audit_result_id_audit_results_id_fk": {
+          "name": "audit_scores_audit_result_id_audit_results_id_fk",
+          "tableFrom": "audit_scores",
+          "tableTo": "audit_results",
+          "columnsFrom": [
+            "audit_result_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "ck_audit_scores_type": {
+          "name": "ck_audit_scores_type",
+          "value": "\"audit_scores\".\"score_type\" IN ('SEO', 'GEO')"
+        },
+        "ck_audit_scores_range": {
+          "name": "ck_audit_scores_range",
+          "value": "\"audit_scores\".\"max_score\" > 0 AND \"audit_scores\".\"score\" >= 0 AND \"audit_scores\".\"score\" <= \"audit_scores\".\"max_score\""
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

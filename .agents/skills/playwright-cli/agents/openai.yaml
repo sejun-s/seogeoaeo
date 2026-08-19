@@ -1,0 +1,4 @@
+interface:
+  display_name: "Playwright QA"
+  short_description: "실제 브라우저로 제품 흐름과 반응형 UI를 검증합니다"
+  default_prompt: "Use $playwright-cli to verify this CiteGraph flow in a real browser."

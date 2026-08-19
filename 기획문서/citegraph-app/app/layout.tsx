@@ -1,0 +1,1 @@
+import type{Metadata}from"next";import"./globals.css";import"./v2.css";export const metadata:Metadata={title:"CiteGraph · URL Audit",description:"Evidence-first SEO and GEO readiness audit"};export default function Layout({children}:{children:React.ReactNode}){return <html lang="ko"><body>{children}</body></html>}

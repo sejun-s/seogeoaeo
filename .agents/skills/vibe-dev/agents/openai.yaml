@@ -1,0 +1,4 @@
+interface:
+  display_name: "CiteGraph Vibe Dev"
+  short_description: "작은 기능을 구현하고 끝까지 검증하는 개발 workflow"
+  default_prompt: "Use $vibe-dev to implement and verify the next CiteGraph vertical slice."

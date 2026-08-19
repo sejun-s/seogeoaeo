@@ -1,0 +1,26 @@
+# 이 저장소 전체(seogeoaeo)에 적용되는 최상위 gitignore.
+# citegraph-app 자체 규칙은 기획문서/citegraph-app/.gitignore를 따로 둔다.
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# 비밀값 — 이 저장소는 public이다. 어떤 하위 경로에서도 커밋되면 안 된다.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.dev.vars
+
+# 대용량/생성물 (하위 프로젝트에도 각자 있지만 최상위에서 한 번 더 방어)
+node_modules/
+dist/
+.next/
+.vinext/
+.wrangler/
+coverage/
+outputs/

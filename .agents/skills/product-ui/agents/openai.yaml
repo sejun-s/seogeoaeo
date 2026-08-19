@@ -1,0 +1,4 @@
+interface:
+  display_name: "CiteGraph Product UI"
+  short_description: "전문적인 분석 제품 UI를 설계하고 검수합니다"
+  default_prompt: "Use $product-ui to design and review this CiteGraph product interface."
