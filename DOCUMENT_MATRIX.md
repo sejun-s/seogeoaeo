@@ -72,6 +72,8 @@
 | **기획 검토안(비-정본)** | [`Score criteria table/SEO_GEO_기준표_고도화_기획안.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/SEO_GEO_%EA%B8%B0%EC%A4%80%ED%91%9C_%EA%B3%A0%EB%8F%84%ED%99%94_%EA%B8%B0%ED%9A%8D%EC%95%88.md) | 2026-08-19 | **기획 검토안** | 사용자 제공 `.docx` 원본을 옮김. Expertise 축 신설 등 SEO/GEO 100점 카테고리 전면 재설계 제안. **정본 아님** — 승인 Gate 통과 전 Weight 반영 금지 |
 | **측정 가능성 감사(비-정본)** | [`Score criteria table/expertise-axis-measurability-review.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/expertise-axis-measurability-review.md) | 2026-08-19 | **검토 완료** | 위 기획안 19개 카테고리를 A(이미 측정)/B(FACT 추가 가능)/C(새 인프라 필요)/D(Semantic Engine 필요)로 분류. 연구 인용 3편 실재 확인, 마케팅 사례 수치는 근거로 미사용 권고 |
 | **실전 검증(비-정본)** | [`real-world-validation-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20.md) | 2026-08-20 | **검증 완료** | 실제 공개 페이지 20개(한국 기술블로그·SaaS·커머스·뉴스·문서 + 글로벌 레퍼런스)에 v1/v2 동시 실행. SEO/GEO 점수 방향성 확인, Page Type UNKNOWN 68% 실측, GEO-TRUST-*가 비-article 페이지에 구조적으로 불리함을 확인. Weight 변경 근거 아님 |
+| **사람 라벨 정오표(비-정본)** | [`real-world-validation-report-2026-08-20-human-labeled.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20-human-labeled.md) | 2026.08.20-v1.0 | **검증 완료** | §5 P6 산출물. 20개 실전 URL에 전문가 휴먼 라벨(Human Label) 부여 및 v2 분류기 정오표 작성. ARTICLE_BLOG 100% 정답률, CATEGORY_LISTING 인식 한계 규명 |
+| **Shadow Mode 리포트(비-정본)**| [`v1-v2-shadow-mode-comparison-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/v1-v2-shadow-mode-comparison-report-2026-08-20.md) | 2026.08.20-v1.0 | **검증 완료** | §5 P7 산출물. v1 vs v2 Fact(+Coverage) vs Human Label 3원 통합 비교 및 v2 공식 승격을 위한 4대 Gate 질문 정의 |
 | **기획안(상위 대체됨)** | [`score-reliability-improvement-plan-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20.md) | v1 | **상위 대체됨** | Claude 제출 초안. 코덱스 검토를 반영한 v2-final로 대체됨. 히스토리 보존용으로만 유지 |
 | **점수 신뢰도 기획 최종안** | [`score-reliability-improvement-plan-2026-08-20-v2-final.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20-v2-final.md) | v2-final | **구현 착수 기준** | Claude 초안 + 코덱스 검토를 Claude가 재검증(코드 대조)해 통합한 최종 기획안. §5 P1~P7이 이번 라운드 구현 범위(Page Type Signal Family, UNKNOWN reason taxonomy, Registry Fact Dependency Audit 등)를 정의한다. v1 rule 변경·v2 공식 승격은 미승인 |
 | **Registry 감사 결과(비-정본)** | [`registry-fact-dependency-audit-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/registry-fact-dependency-audit-2026-08-20.md) | 2026-08-20 | **검증 완료** | 위 기획안 §5 P3 산출물. `date.signal`은 SEO/GEO 두 축에서 사실상 동일한 판정 로직으로 중복 계산됨(사고형 중복, 병합 검토 대상), `content.main_text`는 다각도 사용으로 문제 없음을 코드 대조로 확인. Rule Weight 변경 없음(리포트까지만) |
@@ -87,6 +89,16 @@
 ---
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
+
+### [v2-eng-p4p5p6p7] 점수 신뢰도 개선 2차 구현 (P4~P7) — 2026-08-20
+* **담당 AI**: Antigravity (Google DeepMind Team)
+* **사용 모델**: Gemini 3.7 Flash
+* **경위**: Claude가 구현한 P1~P3(e60afb9) 위에서 인계받아 `gemini-prompt-score-reliability-p4-p7.md` 및 `score-reliability-improvement-plan-2026-08-20-v2-final.md` §5 P4~P7 작업을 완수함.
+* **P4 — Sensitivity / Monotonicity 테스트 인프라**: `tests/v2/sensitivity-monotonicity.test.ts` 추가. author, date, citation, canonical, title 등 단일 Fact 변형에 대한 점수 delta 측정 및 maxWeight 상한/비감소(Monotonicity) 검증 완료.
+* **P5 — Frozen Corpus (원본 HTML 비저장 방식)**: `lib/v2/corpus.ts`, `tests/v2/frozen-corpus.test.ts` 추가. 공개 저장소 저작권/ToS 보호를 위해 raw HTML 대신 `FactRecord`/`EvidenceRecord` + `contentHash` 기반 스냅샷 구조 확립 및 결정론적 재현성 검증.
+* **P6 — 실전 검증 20 URL 사람 라벨링 및 정오표**: `real-world-validation-report-2026-08-20-human-labeled.md` 작성. 20개 실전 표본에 대한 휴먼 라벨러 판정 및 v2 분류기 정오 분석 (ARTICLE_BLOG 100%, CATEGORY_LISTING 피드 인식 한계 분석).
+* **P7 — v1/v2/사람 라벨 통합 비교 리포트 (Shadow Mode 공식화)**: `v1-v2-shadow-mode-comparison-report-2026-08-20.md` 작성. 3원 비교 분석 및 v2 공식 승격을 위한 4대 승격 Gate 질문 확정.
+* **검증 결과**: Vitest **108/108 PASS** (기존 100개 + 신규 8개 테스트 전원 통과), TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
 
 ### [v2-eng-p1p2p3] 점수 신뢰도 개선 1차 구현 — 2026-08-20
 * **담당 AI**: Claude Sonnet 5

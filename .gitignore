@@ -24,3 +24,5 @@ dist/
 .wrangler/
 coverage/
 outputs/
+test-results/
+.local-corpus/

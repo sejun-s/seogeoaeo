@@ -41,3 +41,4 @@ yarn-error.log*
 
 # typecheck 산출물
 tsconfig.tsbuildinfo
+/.local-corpus/
