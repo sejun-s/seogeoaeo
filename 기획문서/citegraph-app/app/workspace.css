@@ -1,0 +1,98 @@
+:root { --mint: #27b99a; --mint-dark: #127a68; --mint-soft: #e5f5ef; --canvas: #edf3f1; }
+body { background: var(--canvas); }
+.app-header { background: #fff; grid-template-columns: 248px 1fr auto; padding: 0 24px 0 20px; }
+.brand { gap: 9px; }
+.brand i { align-items: center; background: var(--mint); border-radius: 5px; color: #fff; display: inline-flex; font: 700 9px ui-monospace, monospace; height: 25px; justify-content: center; width: 25px; }
+.app-header nav { align-items: center; }
+.app-header nav span::after { content: "/"; margin-left: 8px; }
+.app-header nav strong { font-size: 12px; }
+.mode { align-items: center; display: flex; gap: 7px; }
+.mode i { background: var(--mint); border-radius: 50%; height: 7px; width: 7px; }
+.workspace-layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); margin: 0 auto; max-width: 1440px; min-height: calc(100vh - 56px); }
+.project-sidebar { background: #fff; border-right: 1px solid var(--line); padding: 20px 14px 48px; }
+.primary-nav { border-bottom: 1px solid var(--line); display: grid; gap: 3px; margin-bottom: 20px; padding-bottom: 16px; }
+.primary-nav a { border-radius: 4px; color: var(--muted); font-size: 12px; padding: 9px 10px; text-decoration: none; }
+.primary-nav a:hover { background: var(--soft); color: var(--ink); }
+.primary-nav a[aria-current="page"] { background: var(--mint); color: #fff; font-weight: 700; }
+.sidebar-heading { border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+.sidebar-heading h2 { font-size: 18px; margin: 0; }
+.sidebar-heading > p:last-child { color: var(--muted); font-size: 11px; margin: 5px 0 0; }
+.project-list { margin: 12px -8px; }
+.project-list button { background: transparent; border: 0; border-left: 2px solid transparent; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; min-height: 48px; padding: 8px 10px; text-align: left; width: 100%; }
+.project-list button:hover { background: var(--soft); }
+.project-list button.active { background: var(--mint-soft); border-left-color: var(--mint-dark); }
+.project-list button strong { font-size: 12px; }
+.project-list button span, .empty-projects { color: var(--muted); font: 10px ui-monospace, monospace; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.new-project { border-top: 1px solid var(--line); padding-top: 12px; }
+.new-project summary { cursor: pointer; font-size: 12px; font-weight: 700; }
+.project-form { display: grid; gap: 7px; margin-top: 10px; }
+.project-form input { background: #fff; border: 1px solid #aeb7c0; border-radius: 3px; height: 34px; min-width: 0; padding: 0 9px; width: 100%; }
+.project-form button { background: #fff; border: 1px solid var(--ink); border-radius: 3px; font-weight: 700; height: 34px; }
+.recent-scans { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 12px; }
+.recent-scans > div { display: flex; font-size: 11px; justify-content: space-between; }
+.recent-scans > div span { color: var(--muted); }
+.recent-scans p { border-bottom: 1px solid #edf0f2; display: flex; flex-direction: column; margin: 0; padding: 8px 0; }
+.recent-scans p span { font: 10px ui-monospace, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-scans time { color: var(--muted); font-size: 10px; }
+.audit-content { margin: 0; max-width: none; min-width: 0; padding: 28px 28px 64px; width: 100%; }
+.dashboard-title { align-items: flex-end; }
+.dashboard-title h1 { font-size: 25px; }
+.workspace-state { background: #fff; border: 1px solid var(--line); border-radius: 6px; display: grid; min-width: 190px; padding: 9px 12px; }
+.workspace-state span, .workspace-state small { color: var(--muted); font-size: 10px; }
+.workspace-state strong { color: var(--mint-dark); font-size: 12px; }
+.command-bar { background: #fff; border: 1px solid var(--line); border-top: 2px solid var(--mint-dark); border-radius: 6px; padding: 14px; }
+.command-bar button { background: var(--mint-dark); border-color: var(--mint-dark); }
+.report { display: grid; gap: 12px; margin-top: 14px; }
+.report > section { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding-left: 16px; padding-right: 16px; }
+.report > .save-status { border-left-width: 3px; }
+.url-summary { padding-bottom: 20px; padding-top: 20px; }
+.score-section { padding-bottom: 22px; padding-top: 22px; }
+.findings-section, .source-section, .v2-section { padding-bottom: 22px; padding-top: 22px; }
+.meter i { background: var(--mint-dark); }
+.geo .meter i { background: #6b5cb8; }
+.save-status { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 12px 0; }
+.save-status > div { display: flex; flex-direction: column; }
+.save-status strong { font-size: 12px; }
+.save-status span { color: var(--muted); font-size: 11px; }
+.save-status.saved { border-left: 3px solid var(--pass); padding-left: 12px; }
+.save-status.unsaved { border-left: 3px solid var(--warn); padding-left: 12px; }
+.save-status button { background: var(--ink); border: 0; border-radius: 3px; color: #fff; font-size: 12px; font-weight: 700; min-height: 36px; padding: 0 12px; }
+.finding.fail .finding-row { border-left: 3px solid var(--fail); background: #fffafa; }
+.finding.warn .finding-row { border-left: 3px solid var(--warn); background: #fffdf7; }
+.finding.pass .finding-row { border-left: 3px solid transparent; }
+.evidence { align-items: flex-start; flex-direction: column; }
+.evidence-technical summary, .rule-technical summary { color: var(--muted); cursor: pointer; font-size: 10px; }
+.evidence-technical code, .rule-technical code { color: var(--geo); display: block; font: 10px ui-monospace, monospace; margin-top: 3px; overflow-wrap: anywhere; }
+.rule-technical { grid-column: 1 / -1; }
+/* 사이드바(248px)가 콘텐츠 폭을 그만큼 줄이는데, globals.css의 좁은 화면
+   규칙은 700px에서만 켜진다. 그 사이(800~1440px대) 폭에서 score-section의
+   고정 310px 컬럼과 finding-row의 minmax(300px,1fr)가 남은 폭보다 커져
+   가로 스크롤이 생겼다(1024px에서 120px, 966px에서 178px 실측). */
+@media (max-width: 1320px) {
+  .score-section { grid-template-columns: 1fr; gap: 18px; }
+  .category-header, .category-row { grid-template-columns: minmax(120px, 1fr) 70px minmax(110px, 1fr); gap: 10px; }
+  .finding-table-head, .finding-row { grid-template-columns: 56px minmax(0, 1fr) 60px 64px 20px; gap: 8px; }
+  .finding-main small { max-width: 100%; }
+  .finding-detail { grid-template-columns: 1fr; padding-left: 24px; }
+  .v2-domains { grid-template-columns: 1fr; }
+  .v2-meta, .v2-domain dl { grid-template-columns: repeat(2, 1fr); }
+  .url-summary { flex-wrap: wrap; }
+}
+
+@media (max-width: 800px) {
+  .app-header { grid-template-columns: 1fr auto; padding: 0 16px; }
+  .workspace-layout { display: block; }
+  .project-sidebar { border-bottom: 1px solid var(--line); border-right: 0; padding: 16px; }
+  .recent-scans { display: none; }
+  .project-list { display: flex; gap: 6px; margin: 10px 0; overflow-x: auto; padding-bottom: 2px; }
+  .project-list button { border: 1px solid var(--line); border-left-width: 1px; flex: 0 0 150px; min-height: 42px; }
+  .project-list button.active { border-color: var(--seo); }
+  .new-project { border-top: 0; padding-top: 0; }
+  .project-form { grid-template-columns: 1fr; }
+  .save-status { align-items: flex-start; gap: 10px; }
+  .save-status button { flex: 0 0 auto; }
+  .audit-content { padding: 20px 16px 48px; }
+  .dashboard-title { align-items: flex-start; display: flex; flex-direction: column; gap: 12px; }
+  .workspace-state { width: 100%; }
+  .report > section { border-left: 0; border-radius: 4px; border-right: 0; margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+}

@@ -27,6 +27,8 @@ export interface CompareRequestBody {
 }
 
 export interface TargetMetrics {
+  aiVisibilityStatus: "REAL" | "UNAVAILABLE";
+  aiVisibilityReason: string | null;
   citationRate: number | null;
   brandMentionRate: number | null;
   averageCitationPosition: number | null;

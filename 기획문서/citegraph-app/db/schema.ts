@@ -257,6 +257,76 @@ export const compareTargets = sqliteTable(
   ],
 );
 
+export const workspaces = sqliteTable(
+  "workspaces",
+  {
+    id: text("id").primaryKey(),
+    kind: text("kind", { enum: ["LOCAL_WORKSPACE"] }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [check("ck_workspaces_kind", sql`${t.kind} = 'LOCAL_WORKSPACE'`)],
+);
+
+export const projects = sqliteTable(
+  "projects",
+  {
+    id: text("id").primaryKey(),
+    workspaceId: text("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    domainLabel: text("domain_label").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    index("idx_projects_workspace_created").on(t.workspaceId, t.createdAt),
+    uniqueIndex("ux_projects_workspace_domain").on(t.workspaceId, t.domainLabel),
+  ],
+);
+
+export const auditV2Results = sqliteTable(
+  "audit_v2_results",
+  {
+    id: text("id").primaryKey(),
+    workspaceId: text("workspace_id").references(() => workspaces.id, { onDelete: "set null" }),
+    projectId: text("project_id").references(() => projects.id, { onDelete: "set null" }),
+    snapshotId: text("snapshot_id").notNull(),
+    requestedUrl: text("requested_url").notNull(),
+    finalUrl: text("final_url").notNull(),
+    contentHash: text("content_hash").notNull(),
+    httpStatus: integer("http_status").notNull(),
+    contentType: text("content_type").notNull(),
+    methodologyVersion: text("methodology_version").notNull(),
+    registryVersion: text("registry_version").notNull(),
+    extractorVersion: text("extractor_version").notNull(),
+    storageMode: text("storage_mode", { enum: ["HASH_ONLY"] }).notNull(),
+    resultJson: text("result_json").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    uniqueIndex("ux_audit_v2_results_workspace_project_snapshot").on(t.workspaceId, t.projectId, t.snapshotId),
+    index("idx_audit_v2_results_project_created").on(t.projectId, t.createdAt),
+    index("idx_audit_v2_results_created").on(t.createdAt),
+    check("ck_audit_v2_results_storage_mode", sql`${t.storageMode} = 'HASH_ONLY'`),
+    check("ck_audit_v2_results_http_status", sql`${t.httpStatus} BETWEEN 100 AND 599`),
+  ],
+);
+
+export const productEvents = sqliteTable(
+  "product_events",
+  {
+    id: text("id").primaryKey(),
+    eventName: text("event_name", { enum: ["AUDIT_V2_COMPLETED", "V2_EVIDENCE_VIEWED"] }).notNull(),
+    auditV2ResultId: text("audit_v2_result_id")
+      .notNull()
+      .references(() => auditV2Results.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    index("idx_product_events_result").on(t.auditV2ResultId, t.createdAt),
+    index("idx_product_events_name_created").on(t.eventName, t.createdAt),
+    check("ck_product_events_name", sql`${t.eventName} IN ('AUDIT_V2_COMPLETED', 'V2_EVIDENCE_VIEWED')`),
+  ],
+);
+
 // Drizzle Relational Mappings
 export const auditResultsRelations = relations(auditResults, ({ many }) => ({
   scores: many(auditScores),
@@ -310,4 +380,25 @@ export const compareTargetsRelations = relations(compareTargets, ({ one }) => ({
     fields: [compareTargets.auditResultId],
     references: [auditResults.id],
   }),
+}));
+
+export const auditV2ResultsRelations = relations(auditV2Results, ({ many }) => ({
+  events: many(productEvents),
+}));
+
+export const productEventsRelations = relations(productEvents, ({ one }) => ({
+  auditV2Result: one(auditV2Results, {
+    fields: [productEvents.auditV2ResultId],
+    references: [auditV2Results.id],
+  }),
+}));
+
+export const workspacesRelations = relations(workspaces, ({ many }) => ({
+  projects: many(projects),
+  auditV2Results: many(auditV2Results),
+}));
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
+  workspace: one(workspaces, { fields: [projects.workspaceId], references: [workspaces.id] }),
+  auditV2Results: many(auditV2Results),
 }));

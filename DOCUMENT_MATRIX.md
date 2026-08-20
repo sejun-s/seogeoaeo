@@ -69,10 +69,159 @@
 | **진단 엔진** | [`citegraph-app/lib/audit.ts`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-app/lib/audit.ts) | v1.0 | **구현 완수** | 정본 35개 결정론적 규칙 엔진 (`rulesetVersion: 2026.08.1`) |
 | **웹 UI 대시보드**| [`citegraph-app/app/page.tsx`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-app/app/page.tsx) | v1.0 | **구현 완수** | SEO Score (100점) 및 GEO Readiness (100점) 정직한 분리 대시보드 |
 | **참고자료(비-정본)**| [`open-source-seo-geo-benchmark.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/open-source-seo-geo-benchmark.md) | 2026-08-18 | **리서치 참고** | SEO/GEO 오픈소스 10건 라이선스·재사용 등급 벤치마킹. **정본 아님** — 규칙·가중치·점수 구조 결정에 직접 인용 금지, 구현 아이디어 참고용으로만 사용. §4.2 용어는 CiteGraph 공식 명칭(SEO Score/GEO Readiness Score)과 다르므로 문서 내 정정 각주를 따를 것 |
+| **기획 검토안(비-정본)** | [`Score criteria table/SEO_GEO_기준표_고도화_기획안.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/SEO_GEO_%EA%B8%B0%EC%A4%80%ED%91%9C_%EA%B3%A0%EB%8F%84%ED%99%94_%EA%B8%B0%ED%9A%8D%EC%95%88.md) | 2026-08-19 | **기획 검토안** | 사용자 제공 `.docx` 원본을 옮김. Expertise 축 신설 등 SEO/GEO 100점 카테고리 전면 재설계 제안. **정본 아님** — 승인 Gate 통과 전 Weight 반영 금지 |
+| **측정 가능성 감사(비-정본)** | [`Score criteria table/expertise-axis-measurability-review.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/expertise-axis-measurability-review.md) | 2026-08-19 | **검토 완료** | 위 기획안 19개 카테고리를 A(이미 측정)/B(FACT 추가 가능)/C(새 인프라 필요)/D(Semantic Engine 필요)로 분류. 연구 인용 3편 실재 확인, 마케팅 사례 수치는 근거로 미사용 권고 |
+| **Stage 0 감사(비-정본)** | [`CURRENT_PRODUCT_MAP.md`](file:///c:/workspace/seogeoaeo/CURRENT_PRODUCT_MAP.md) | 2026.08.19-v1.2 | **기획 검토안** | 2026-08-19 | 현재 UI·API·엔진·저장·테스트·운영 경로 지도 |
+| **Stage 0 감사(비-정본)** | [`FEATURE_GAP_MATRIX.md`](file:///c:/workspace/seogeoaeo/FEATURE_GAP_MATRIX.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | 후보 130개 전체 상태·8차원 평가·채택 권고 |
+| **Stage 0 감사(비-정본)** | [`DATA_RELIABILITY_AUDIT.md`](file:///c:/workspace/seogeoaeo/DATA_RELIABILITY_AUDIT.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | 점수·Evidence·재현성·실패 처리 감사 |
+| **Stage 0 감사(비-정본)** | [`MONETIZATION_AND_UNIT_ECONOMICS.md`](file:///c:/workspace/seogeoaeo/MONETIZATION_AND_UNIT_ECONOMICS.md) | 2026.08.19-v1.0 | **기획 검토안** | 2026-08-19 | 무료/유료 경계, 계량, 원가, 업셀 감사 |
+| **Stage 0 감사(비-정본)** | [`SECURITY_AND_TECH_DEBT.md`](file:///c:/workspace/seogeoaeo/SECURITY_AND_TECH_DEBT.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | SSRF·테넌시·비밀정보·작업 안정성 감사 |
+| **Stage 0 감사(비-정본)** | [`OPTIONS_AND_RECOMMENDATION.md`](file:///c:/workspace/seogeoaeo/OPTIONS_AND_RECOMMENDATION.md) | 2026.08.19-v1.2 | **기획 검토안** | 2026-08-19 | 채택·보류·폐기 결정과 3단계 실행안 |
+| **투자 준비도(비-정본)** | [`INVESTOR_READINESS_MARKET_REVIEW.md`](file:///c:/workspace/seogeoaeo/INVESTOR_READINESS_MARKET_REVIEW.md) | 2026.08.19-v1.0 | **기획 검토안** | 2026-08-19 | 공식 경쟁사 자료 기반 시장성·투자 격차·기능 우선순위 |
+| **Workspace 보안 모델** | [`WORKSPACE_SECURITY_MODEL.md`](file:///c:/workspace/seogeoaeo/WORKSPACE_SECURITY_MODEL.md) | 2026.08.19-v1.0 | **구현 완수** | 2026-08-19 | httpOnly UUID 구획의 보장·비보장 범위, 도메인 라벨, legacy migration 정책 |
 
 ---
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
+
+### [문서 전용] SEO/GEO 기준표 고도화 기획안 검토 - 2026-08-19
+* **담당 AI**: Claude Sonnet 5
+* **작업 영역**: 문서만. 코드·점수·Weight 변경 없음.
+* **작업 내용**: 사용자가 제공한 `SEO_GEO_기준표_기획안.docx`(Expertise 축 신설 등
+  SEO/GEO 카테고리 전면 재설계 제안)를 마크다운으로 옮기고, 19개 제안 카테고리를
+  A(이미 측정)/B(FACT로 추가 가능)/C(새 인프라 필요)/D(Semantic Engine 필요)로
+  분류해 측정 가능성을 감사했다. 인용된 연구 3편(Aggarwal KDD 2024, GEO-SFE,
+  Citation Selection vs Absorption)을 WebSearch로 직접 확인해 실재함과 수치
+  일치를 검증했다. 마케팅 사례 수치(Stonly 986% 등)는 원출처가 GEO 에이전시
+  블로그임을 확인해 가중치 근거로 쓰지 않도록 권고했다.
+* **결정하지 않은 것**: Expertise를 포함한 어떤 카테고리 Weight도 이 시점에
+  코드에 반영하지 않았다. `citegraph-weight-calibration-plan.md` §10 승인
+  Gate를 통과해야 정본 전환이 가능하다.
+
+### [v0.14.1-dashboard-fixes] - 2026-08-19 (v0.14.0 실사용 검증 결함 수정)
+* **담당 AI**: Claude Sonnet 5
+* **작업 영역**: 반응형 overflow, nav 정직성, 점수 구성 시각화, Findings 자동 펼침.
+* **변경 사유**: v0.14.0을 로컬 브라우저에서 실제로 조작해보니 800~1439px 폭에서 가로 스크롤이 발생해 Findings의 Result·펼치기 버튼이 화면 밖으로 밀려났고, `Overview` nav 항목이 실질적으로 같은 화면을 가리켜 여러 섹션이 있는 것처럼 보였다. 사용자 요청에 따라 실제 조작 후 발견한 결함을 수정했다.
+* **주요 작업 내용**:
+  1. **가로 overflow 수정**: 사이드바(248px) 도입 이후 `.score-section`의 고정 310px 컬럼과 `.finding-row`의 `minmax(300px,1fr)`가 남은 폭보다 커지는 문제를 `workspace.css`에 1320px 이하 전용 breakpoint를 추가해 해결했다. 1024px 120px, 966px 178px 넘침 → 0으로 확인.
+  2. **nav 정직성**: 실질적으로 같은 화면을 가리키던 `Overview`/`URL Audits` 2개 항목을 실제 상태에 맞는 `URL Audit` 1개로 통합했다.
+  3. **점수 구성 시각화**: 카테고리 막대를 단일 색 채우기에서 PASS/WARN/FAIL 3색 stacked bar + WARN·FAIL 건수 범례로 교체했다. `category.rules`가 저장·캐시 경로를 거친 실제 API 응답에는 없음을 발견해(런타임 크래시 재현·수정), 최상위 `findings` 배열에서 카테고리별 WARN/FAIL 가중치를 합산하고 PASS는 `maxScore`에서 역산하는 방식으로 다시 구현했다.
+  4. **해결방안 도달성**: 가중치 상위 FAIL 최대 3건을 기본 펼침 상태로 렌더링해 Evidence·Recommendation을 클릭 없이 바로 보이게 했다.
+* **검증 결과**: Vitest 87/87, TypeScript 0 errors, ESLint 0 errors, `vinext build` 성공, Playwright 6/6(desktop-1440/mobile-390 각 3개 스펙) 통과. 실제 D1 API(`https://example.com`)로 v1 categories 응답에 `rules` 필드가 없음을 curl로 직접 확인.
+* **주의**: 이 작업과 동시에 다른 AI(OpenAI Codex)가 같은 파일을 계속 편집 중이었다. 수동 브라우저 조작 검증은 dev 서버 재시작·HMR 충돌로 신뢰하기 어려웠고, 최종 확인은 Playwright의 격리된 서버 기동에 의존했다.
+
+### [v0.14.0-dashboard-shell] - 2026-08-19 (참고 Figma 기반 전문 분석 Workspace UI)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: 전역 shell, 좌측 내비게이션, Project 영역, 분석 command bar, 결과 surface, 반응형.
+* **변경 사유**: 제공된 TeamHub 참고 UI의 명확한 좌측 계층·상단 맥락·고밀도 모듈 구조를 CiteGraph 분석 workflow에 맞게 적용하기 위함.
+* **주요 작업 내용**:
+  1. 좌측을 제품 메뉴와 Project/Recent Scan 계층으로 재구성하고 현재 메뉴·Project를 민트 accent로 표시한다.
+  2. 상단에 현재 Workspace/Project breadcrumb와 REAL HTML·결정론적 분석 상태를 배치한다.
+  3. URL 입력을 독립 command bar로 만들고 공식 점수, Findings, 실험 Preview를 흰색 분석 surface로 구분한다.
+  4. HR용 카드·차트는 복제하지 않고 CiteGraph의 Evidence-first 순서와 공식/실험 점수 신뢰 경계를 유지한다.
+  5. 390px에서는 sidebar를 상단 navigation/Project selector로 전환하고 새 Project form은 생성 후 자동 접는다.
+* **검증 결과**: Vitest **87/87 PASS**, TypeScript PASS, ESLint 0 errors(기존 생성 파일 warning 2건), build PASS. Playwright desktop/mobile audit·compare·Workspace **6/6 PASS**, console/page/network error 및 horizontal overflow 0, screenshot 검수 완료.
+
+### [v0.13.0-report-hierarchy] - 2026-08-19 (사용자 리포트와 개발 진단 정보 분리)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: 점수 정보 계층, v2 Preview, Page Type 설명, NOT_EVALUATED 상태, Findings/Evidence 표현.
+* **변경 사유**: v1 공식 점수와 v2 실험 점수가 동등하게 노출되고 내부 rule·hash·ID가 사용자 리포트에 섞여 신뢰와 가독성을 해치던 문제를 해결하기 위함.
+* **주요 작업 내용**:
+  1. 기본 화면의 공식 점수는 `SEO Score`와 `GEO Readiness Score`만 유지하고 v2 Fact 측정은 기본 접힘 Preview로 이동했다.
+  2. v2 점수를 `실험적`으로 명시하고 공식 점수와 직접 비교하거나 대체하지 않는다고 안내한다.
+  3. Result ID, hash, snapshot, rule code, Evidence ID는 `고급 진단 정보` 안에서만 표시한다.
+  4. Semantic `NOT_EVALUATED`는 실패가 아닌 `준비 중`으로 분리하고 Findings 실패 수에 포함하지 않는다고 설명한다.
+  5. Page Type UNKNOWN의 영향 설명과 Findings FAIL/WARN 좌측 상태선을 추가하고, Evidence 본문은 ID보다 우선 노출한다.
+* **검증 결과**: Vitest **87/87 PASS**, TypeScript PASS, ESLint 0 errors(기존 생성 파일 warning 2건), build PASS. Playwright desktop/mobile 전체 **6/6 PASS**, Preview 기본 접힘·고급 정보 drill-down·console/page/network error 0·horizontal overflow 0 확인.
+
+### [v0.12.0-project-sidebar] - 2026-08-19 (메인 분석과 Project 저장 workflow 연결)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: 메인 화면 IA, Project sidebar, v2 Scan 자동·수동 저장, 최근 결과 목록.
+* **변경 사유**: URL 입력이 단발성 검색처럼 보이고 분석 결과가 어느 프로젝트에 축적되는지 알 수 없던 핵심 UX 모호성을 제거하기 위함.
+* **주요 작업 내용**:
+  1. 1440px 화면 좌측에 Project 선택·생성·최근 Scan 블록을 배치하고 분석 작업 영역과 분리했다.
+  2. 선택 Project가 있으면 분석 시 v2 결과를 자동 저장하고 결과 상단에 저장 상태와 Project명을 표시한다.
+  3. Project 미선택 분석은 `저장되지 않음`으로 표시하며, 분석 후 Project를 선택·생성해 `PATCH /api/audits/v2/:id`로 저장할 수 있다.
+  4. 모바일에서는 Project 목록을 상단 가로 선택 영역으로 전환해 390px overflow 없이 동일 기능을 유지한다.
+* **검증 결과**: Vitest **87/87 PASS**, TypeScript PASS, ESLint 0 errors(기존 생성 파일 warning 2건), build PASS. Playwright desktop/mobile audit·compare·Workspace **6/6 PASS**, 프로젝트 생성→선택→분석→저장 상태와 horizontal overflow 0 확인.
+
+### [v0.11.0-local-workspace] - 2026-08-19 (Workspace → Project → v2 Scan 구획)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: LOCAL_WORKSPACE 쿠키, Project 도메인 라벨, v2 Scan 귀속·이력, 소유권 negative path.
+* **변경 사유**: 로그인 도입 전 반복 진단을 프로젝트별로 그룹핑하되, 식별자 구획을 진짜 tenant isolation으로 오인하지 않도록 명시적인 신뢰 경계를 만들기 위함.
+* **주요 작업 내용**:
+  1. UUID v4를 httpOnly/SameSite 쿠키로 발급하고 Workspace ID를 URL이나 client state에 노출하지 않는다.
+  2. Project 생성·선택과 최근 v2 Scan 수를 제공한다. 도메인은 그룹핑용 normalized hostname이며 소유권 검증이 아니다.
+  3. v2 결과·재조회·Evidence event·snapshot cache를 Workspace 범위로 제한한다.
+  4. 기존 v2 행은 nullable 컬럼을 통해 `legacy unowned`로 보존하며 임의 Workspace에 백필하지 않는다.
+  5. 쿠키 없음 401, 다른 Workspace 소유 Project 접근 404를 실제 두 브라우저 컨텍스트에서 검증한다.
+* **보안 경계**: 인증·서명 세션·역할 권한이 없어 진짜 tenant isolation이 아니다. `LOCAL_WORKSPACE · IDENTIFIER ONLY`로만 표현한다.
+* **검증 결과**: Vitest **87/87 PASS**, TypeScript PASS, ESLint 0 errors(기존 생성 파일 warning 2건), Drizzle schema check 및 build PASS. Playwright desktop 1440px/mobile 390px audit·compare·Workspace negative path **6/6 PASS**, console/page/unexpected network error 및 horizontal overflow 0.
+
+### [v0.10.0-v2-persistence] - 2026-08-19 (v2 결과 보존·재조회 및 최소 제품 이벤트)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: Scoring v2 결과 provenance, D1 저장, 결과 재조회, Evidence 열람 이벤트, UI disclosure.
+* **변경 사유**: 일회성 진단 화면을 반복 가능한 개선 workflow와 제품 activation 측정의 기반으로 전환하기 위함.
+* **주요 작업 내용**:
+  1. v2 snapshot hash, URL, HTTP metadata, 방법론·레지스트리·추출기 버전, Fact/Evidence 판정 결과를 `audit_v2_results`에 저장한다.
+  2. 개인정보·보존정책 확정 전 원문 HTML은 저장하지 않고 `HASH_ONLY`로 명시하며, 민감 query 값이 제거된 normalized URL만 저장한다.
+  3. `GET /api/audits/v2/:id` 재조회와 `AUDIT_V2_COMPLETED`/`V2_EVIDENCE_VIEWED` 최소 이벤트를 추가했다. 익명 사용자 식별자는 수집하지 않는다.
+  4. v2 화면에서 Result ID, content hash, Evidence/Fact 수, 저장 범위를 공개한다.
+* **검증 결과**: Vitest **84/84 PASS**, TypeScript PASS, ESLint 0 errors(기존 생성 파일 warning 2건), build PASS, D1 local migration 0003 적용. Playwright audit/compare desktop 1440px 및 mobile 390px **4/4 PASS**, console/page/unexpected network error 0, horizontal overflow 0.
+* **남은 제한**: Workspace/tenant 인증 전이므로 결과 소유권 경계와 고객별 analytics는 아직 제공하지 않는다. 원문 artifact 보존은 retention·삭제·민감정보 정책 승인 후 별도 slice에서 결정한다.
+
+### [v0.9.0-market-review] - 2026-08-19 (투자 준비도 및 시장성 점검)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: 공식 경쟁사 상품·가격·funding 신호, 현재 제품 투자 readiness, 매출·방어력 중심 기능 우선순위.
+* **변경 사유**: 기능 수 확대가 아니라 유료 반복 사용, unit economics, 데이터 moat를 증명하는 개발 순서로 전환하기 위함.
+* **주요 결론**:
+  1. AI search analytics 시장과 지불 의사는 공식 경쟁사 상품 및 Peec AI의 공개 성장 지표로 확인되지만, CiteGraph 자체 traction은 아직 측정 불가다.
+  2. P0를 product analytics, tenant-safe project, v2 evidence persistence, verify loop, UsageLedger로 재정의했다.
+  3. 자체 대규모 prompt index 대신 한국 Agency의 Evidence→Action→Outcome workflow를 차별화 wedge로 권고했다.
+* **변경 범위**: 시장성 분석 문서와 통합 이력만 추가. 애플리케이션 코드·DB·점수 규칙 변경 없음.
+
+### [v0.8.2] - 2026-08-19 (Compare 상태·사유 계약 보완)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: Compare AI Visibility scope 계산, 대상별 상태·사유 disclosure, normalization 회귀 테스트.
+* **변경 사유**: v0.8.1 화면이 `UNAVAILABLE`을 고정 표시해 향후 REAL observation을 오표시할 수 있고, 대상별 측정 불가 사유와 합성 방지 회귀 검증이 부족한 문제를 보완하기 위함.
+* **주요 작업 내용**:
+  1. 성공 대상의 실제 관측 수에 따라 상단 범위를 `REAL`, `PARTIAL`, `UNAVAILABLE`로 자동 판정한다.
+  2. 대상별로 실제 Citation/Mention/Position 또는 UNAVAILABLE 사유를 표시한다.
+  3. GEO Readiness가 높아도 AI observation 수치는 모두 null로 유지되는 normalization 회귀 테스트를 추가했다.
+* **검증 결과**: Vitest **83/83 PASS**, TypeScript PASS, ESLint 0 errors(기존 생성 파일 warning 2건), build PASS, Playwright desktop/mobile audit·compare **4/4 PASS**. console/page/network error 및 horizontal overflow 0 확인.
+
+### [v0.8.1] - 2026-08-19 (Compare AI Visibility 신뢰 경계 복구)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: Compare 데이터 계약, normalization, ranking, 결과 UI, 단위/E2E 테스트.
+* **변경 사유**: 실제 AI 관측이 없는 상태에서 GEO Readiness 파생값을 citation/mention/position으로 표시하고 순위에 사용하던 신뢰성 결함을 제거하기 위함.
+* **주요 작업 내용**:
+  1. 실제 observation이 없으면 citation rate, brand mention rate, average citation position을 `null`로 반환하고 `aiVisibilityStatus: UNAVAILABLE`과 사유를 명시했다.
+  2. `REAL` observation과 유효 표본이 없는 대상은 AI Visibility winner/ranking에서 제외했다. SEO Score와 GEO Readiness는 기존처럼 독립적으로 비교한다.
+  3. Compare 결과 화면에 `AI Visibility · UNAVAILABLE` 범위 설명을 추가하고 데스크톱 표·모바일 세로 행 구조로 표시했다.
+* **검증 결과**:
+  - Vitest: **82/82 PASS**. TypeScript: **PASS**.
+  - ESLint: **0 errors**(생성 타입 파일의 기존 warning 2건). `vinext build`: **PASS**.
+  - Playwright: audit/compare desktop 1440px 및 mobile 390px 시나리오 **4/4 기능 검증 완료**. Compare screenshot에서 horizontal overflow 0, 합성 Citation Rate 미노출, AI Visibility UNAVAILABLE 표시를 확인했다.
+  - 첫 desktop 실행에서 vinext의 stale build RSC prefetch console 오류를 발견했으며 재빌드 후 재검증에서 재현되지 않았다.
+
+### [v0.8.0-audit] - 2026-08-19 (제품 고도화 Stage 0 읽기 전용 감사)
+* **담당 AI**: OpenAI Codex
+* **사용 모델**: GPT-5
+* **작업 영역**: 현재 제품 지도, 후보 기능 130개 격차, 데이터 신뢰성, 수익화/원가, 보안/기술부채, 실행 옵션.
+* **변경 사유**: 새 기능 구현 전에 현재 구현과 정본의 차이, 데이터 신뢰 경계, 선행 기반을 확인하고 승인 가능한 선택지를 제시하기 위함.
+* **주요 결론**:
+  1. Compare의 citation/brand 지표는 실제 AI 관측이 아니라 GEO 준비도에서 파생되어 `UNRELIABLE`이며, 관측값이 없을 때 `UNAVAILABLE`로 정정하는 작업이 최우선이다.
+  2. 인증·workspace/tenant 경계, UsageLedger, limit, 결제 계층이 없어 외부 connector·AI 관측·수익화 확장보다 기반 구현이 먼저다.
+  3. 후보 문서는 비정본이며 현재 rulesetVersion 2026.08.1 또는 공식 점수 구조를 변경하지 않는다.
+* **검증 결과**: 코드 변경 없음. 현재 기준 Vitest **81/81 PASS**, TypeScript **PASS**, ESLint **0 errors**(생성 파일 warning 2건), build **PASS**. 후보 기능 ID **130/130 대조 완료**. 문서와 Git diff를 별도 확인했다.
 
 ### [v0.7.0] - 2026-08-19 (Scoring v2 호출 경로 및 최소 결과 UI 완료)
 * **담당 AI**: OpenAI Codex

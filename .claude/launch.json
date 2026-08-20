@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "citegraph-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "기획문서/citegraph-app", "run", "dev"],
+      "port": 3000
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import type { CompareResponse, CompareTargetInput } from "../../lib/compare/contracts";
+import "./compare.css";
 
 export default function ComparePage() {
   const [meUrl, setMeUrl] = useState("https://example.com");
@@ -69,6 +70,18 @@ export default function ComparePage() {
     }
   }
 
+  const successfulMetrics = data?.targets
+    .filter((target) => target.status === "SUCCESS" && target.metrics)
+    .map((target) => target.metrics!) ?? [];
+  const realObservationCount = successfulMetrics.filter(
+    (metrics) => metrics.aiVisibilityStatus === "REAL" && metrics.eligibleObservationCount > 0,
+  ).length;
+  const aiVisibilityScope = realObservationCount === 0
+    ? "UNAVAILABLE"
+    : realObservationCount === successfulMetrics.length
+      ? "REAL"
+      : "PARTIAL";
+
   return (
     <main className="app-shell">
       <header className="app-header">
@@ -77,7 +90,7 @@ export default function ComparePage() {
           <span>SEO & AI Search Analysis</span>
         </div>
         <nav aria-label="현재 위치">
-          <Link href="/">Audits</Link>
+          <Link href="/" prefetch={false}>Audits</Link>
           <strong style={{ marginLeft: "8px" }}>Multi-URL Compare</strong>
         </nav>
         <div className="mode">Local mode · Ruleset 2026.08.1</div>
@@ -172,32 +185,42 @@ export default function ComparePage() {
 
         {data && (
           <div className="report" style={{ marginTop: "24px" }}>
-            {/* Header Cards */}
-            <section style={{ display: "grid", gridTemplateColumns: `repeat(${data.targets.length}, 1fr)`, gap: "16px", marginBottom: "24px" }}>
+            <section className="compare-availability" aria-label="AI Visibility 상태">
+              <strong>AI Visibility · {aiVisibilityScope}</strong>
+              <p>
+                {aiVisibilityScope === "UNAVAILABLE"
+                  ? "실제 AI 엔진 관측과 질문 세트가 연결되지 않아 인용률·브랜드 언급률·인용 위치는 계산하지 않습니다. 아래 값은 결정론적 SEO Score와 GEO Readiness 비교입니다."
+                  : aiVisibilityScope === "PARTIAL"
+                    ? "일부 대상에만 실제 AI 관측이 있습니다. 관측이 없는 대상은 순위와 격차 계산에서 제외됩니다."
+                    : "표시된 AI Visibility는 연결된 엔진·질문 세트의 실제 관측 결과이며 GEO Readiness와 별도로 계산됩니다."}
+              </p>
+            </section>
+
+            <section className="compare-targets" aria-label="사이트별 기술 진단 점수">
               {data.targets.map((target) => (
                 <div
                   key={target.targetId}
-                  style={{
-                    padding: "16px",
-                    border: target.role === "ME" ? "2px solid #0284c7" : "1px solid #e5e7eb",
-                    borderRadius: "6px",
-                    background: target.role === "ME" ? "#f0f9ff" : "#ffffff",
-                  }}
+                  className={`compare-target ${target.role === "ME" ? "compare-target-me" : ""}`}
                 >
-                  <div style={{ fontSize: "12px", fontWeight: 700, color: target.role === "ME" ? "#0369a1" : "#6b7280" }}>
+                  <div className="compare-target-role">
                     {target.label} {target.role === "ME" && "(ME)"}
                   </div>
-                  <h3 style={{ margin: "4px 0 8px 0", fontSize: "14px", wordBreak: "break-all" }}>
+                  <h3>
                     {target.displayUrl}
                   </h3>
                   {target.status === "SUCCESS" && target.metrics ? (
-                    <div style={{ marginTop: "12px" }}>
-                      <div style={{ fontSize: "20px", fontWeight: 700, color: "#0f172a" }}>
-                        SEO: {target.metrics.seoScore} / GEO: {target.metrics.geoReadinessScore}
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#475569", marginTop: "4px" }}>
-                        Citation Rate: {target.metrics.citationRate}%
-                      </div>
+                    <div className="compare-target-scores">
+                      <span><small>SEO Score</small><strong>{target.metrics.seoScore ?? "—"}</strong></span>
+                      <span><small>GEO Readiness</small><strong>{target.metrics.geoReadinessScore ?? "—"}</strong></span>
+                      <span>
+                        <small>AI Visibility</small>
+                        <strong>{target.metrics.aiVisibilityStatus ?? "UNAVAILABLE"}</strong>
+                        <small className="compare-visibility-detail">
+                          {target.metrics.aiVisibilityStatus === "REAL"
+                            ? `Citation ${target.metrics.citationRate ?? "—"}% · Mention ${target.metrics.brandMentionRate ?? "—"}% · Position ${target.metrics.averageCitationPosition ?? "—"}`
+                            : target.metrics.aiVisibilityReason || "실제 AI 관측이 없습니다."}
+                        </small>
+                      </span>
                     </div>
                   ) : (
                     <div style={{ color: "#ef4444", fontSize: "12px", marginTop: "8px" }}>

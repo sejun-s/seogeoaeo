@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { validateAndNormalizeUrl } from "../../lib/audit/guard";
 import { calculateInputHash, sha256Hex } from "../../lib/audit/hash";
 import { decodeCursor, encodeCursor } from "../../lib/repositories/audit-repository";
+import { auditV2Results, productEvents } from "../../db/schema";
 
 describe("CiteGraph Backend Guard & Hash Tests", () => {
   it("normalizes scheme, hostname and redacts sensitive query params", async () => {
@@ -50,5 +51,10 @@ describe("CiteGraph Backend Guard & Hash Tests", () => {
     expect(decoded).not.toBeNull();
     expect(decoded?.requestedAt.getTime()).toBe(now.getTime());
     expect(decoded?.id).toBe(id);
+  });
+
+  it("defines hash-only v2 persistence and product event contracts", () => {
+    expect(auditV2Results.storageMode.enumValues).toEqual(["HASH_ONLY"]);
+    expect(productEvents.eventName.enumValues).toEqual(["AUDIT_V2_COMPLETED", "V2_EVIDENCE_VIEWED"]);
   });
 });

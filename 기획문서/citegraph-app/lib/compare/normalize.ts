@@ -55,19 +55,15 @@ export function toComparableAuditSnapshot(
     result: f.result,
   }));
 
-  // Estimate citation metrics from GEO score & readiness findings
-  const geoPassCount = audit.findings.filter((f) => f.scoreType === "GEO" && f.result === "PASS").length;
-  const totalGeoRules = 15;
-  const citationRate = Math.round((geoPassCount / totalGeoRules) * 100 * 10) / 10;
-  const brandMentionRate = Math.round((audit.scores.geoReadiness.score / 100) * 100 * 10) / 10;
-
   const metrics: TargetMetrics = {
-    citationRate,
-    brandMentionRate,
-    averageCitationPosition: citationRate > 0 ? 1.5 : null,
-    citedObservationCount: geoPassCount,
-    mentionedObservationCount: Math.round(geoPassCount * 1.2),
-    eligibleObservationCount: totalGeoRules,
+    aiVisibilityStatus: "UNAVAILABLE",
+    aiVisibilityReason: "AI 관측 provider와 질문 세트가 연결되지 않았습니다.",
+    citationRate: null,
+    brandMentionRate: null,
+    averageCitationPosition: null,
+    citedObservationCount: 0,
+    mentionedObservationCount: 0,
+    eligibleObservationCount: 0,
     seoScore: audit.scores.seo.score,
     geoReadinessScore: audit.scores.geoReadiness.score,
   };

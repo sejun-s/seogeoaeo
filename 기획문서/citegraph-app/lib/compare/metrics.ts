@@ -10,7 +10,10 @@ export function calculateSummary(
   targets: CompareTargetResult[],
 ): CompareSummary | null {
   const validTargets = targets.filter(
-    (t) => t.status === "SUCCESS" && t.metrics !== null,
+    (t) =>
+      t.status === "SUCCESS" &&
+      t.metrics?.aiVisibilityStatus === "REAL" &&
+      t.metrics.eligibleObservationCount > 0,
   );
 
   if (validTargets.length < 2) {
@@ -19,6 +22,8 @@ export function calculateSummary(
 
   const meTarget = validTargets.find((t) => t.role === "ME");
 
+  // Only REAL provider observations can participate in AI Visibility ranking.
+  // SEO/GEO Readiness is deliberately excluded from this summary.
   // Rank sorting:
   // 1. Citation Rate desc
   // 2. Brand Mention Rate desc

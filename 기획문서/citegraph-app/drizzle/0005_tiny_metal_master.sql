@@ -1,0 +1,2 @@
+DROP INDEX `ux_audit_v2_results_workspace_snapshot`;--> statement-breakpoint
+CREATE UNIQUE INDEX `ux_audit_v2_results_workspace_project_snapshot` ON `audit_v2_results` (`workspace_id`,`project_id`,`snapshot_id`);

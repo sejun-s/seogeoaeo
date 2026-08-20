@@ -1,11 +1,14 @@
 import { executeAudit } from "../../../lib/services/audit-service";
 import { executeAuditV2 } from "../../../lib/services/audit-v2-service";
+import { getDb } from "../../../lib/db";
+import { getOwnedProject } from "../../../lib/repositories/project-repository";
+import { ensureLocalWorkspace } from "../../../lib/workspace";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { url?: unknown };
+    const body = (await request.json()) as { url?: unknown; projectId?: unknown };
     if (typeof body.url !== "string" || !body.url.trim() || body.url.length > 2048) {
       return Response.json(
         { error: "INVALID_URL", message: "분석할 URL을 올바르게 입력해 주세요." },
@@ -21,7 +24,16 @@ export async function POST(request: Request) {
       );
     }
     if (engine === "v2") {
-      return Response.json(await executeAuditV2(body.url.trim()), { status: 200 });
+      const db = getDb();
+      const workspace = await ensureLocalWorkspace(db, request);
+      const projectId = typeof body.projectId === "string" ? body.projectId : null;
+      if (projectId && !await getOwnedProject(db, workspace.id, projectId)) {
+        return Response.json({ error: "PROJECT_NOT_FOUND" }, { status: 404 });
+      }
+      return Response.json(await executeAuditV2(body.url.trim(), workspace.id, projectId), {
+        status: 200,
+        headers: workspace.setCookie ? { "set-cookie": workspace.setCookie } : undefined,
+      });
     }
 
     const result = await executeAudit({ url: body.url.trim() });

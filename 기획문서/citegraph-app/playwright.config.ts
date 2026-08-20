@@ -5,13 +5,13 @@ export default defineConfig({
   outputDir: "./outputs/playwright",
   timeout: 60_000,
   webServer: {
-    command: "npm.cmd run start -- --host 127.0.0.1",
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: false,
+    command: "npm.cmd run dev -- --host 127.0.0.1 --port 3001",
+    url: "http://localhost:3001",
+    reuseExistingServer: true,
     timeout: 60_000,
   },
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://localhost:3001",
     channel: "chrome",
     trace: "retain-on-failure",
   },
