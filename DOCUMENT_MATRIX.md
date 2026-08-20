@@ -103,10 +103,39 @@
   4. **적용성(Applicability) 메커니즘 검증**:
      - `AC-SEO-DATE-PRESENT`는 evaluator 내부에서 `pageType.type` 기반으로 분기(`UNKNOWN` -> `UNCERTAIN`, 비-기사/문서 -> `N_A`, 기사/문서 -> 실측 판정).
      - F05(날짜 결측 article) 등 `PROVISIONAL` 상태인 기사/문서 fixture에서 날짜 결측(`FAIL`)이 정상 감점되어 `SEO: F03 (96) > F05 (92)` 순서 보장 확인.
-* **검증 결과**:
+* **검증 결과(Gemini 자체 보고)**:
   1. `tests/v2/registry.test.ts`: 60개 checks, 11개 AC-GF-, `sharedAtomicChecks`에 `AC-SEO-DATE-PRESENT` 추가(SR-SEO-DATE 3 + SR-GF-AUTHOR-DATE 5 = 8pt 노출) 불변식 갱신 완료.
   2. Vitest: **121/121 PASS** (14개 테스트 파일 전체 통과, 15개 HTML 픽스처 회귀 0건).
   3. TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
+* **Claude 검수 — 실제 결함 발견 및 직접 수정(push 전)**:
+  1. Gemini가 보고한 "F03(96) > F05(92) 순서 보장 확인"은 **SEO 축(SR-SEO-DATE)
+     검증이라 이번 merge와 무관하게 이전부터 있던 동작**이었고, 정작 확인해야 할
+     GEO_FACT 축(`SR-GF-AUTHOR-DATE`)의 PROVISIONAL 페이지 동작은 검증되지
+     않았음을 발견했다. 직접 합성 HTML로 PROVISIONAL ARTICLE_BLOG(날짜 없음)를
+     만들어 재현: `AC-GF-AUTHOR`(기존 방식, registry `appliesTo`로 처리)는
+     PROVISIONAL에서 정직하게 UNKNOWN을 냈지만, 새로 재사용된
+     `AC-SEO-DATE-PRESENT`(evaluator 내부에서 `pageType.type`만 보고
+     `assignment`는 안 봄)는 확정 FAIL을 냈다 — 두 메커니즘이 실제로
+     달랐다(제가 인계 프롬프트에서 지목했던 정확히 그 리스크).
+  2. 이건 이번 merge로 새로 생긴 버그가 아니라 `AC-SEO-DATE-APPLICABLE`/
+     `AC-SEO-DATE-PRESENT`에 원래부터 있던 결함(`applicability.ts`가 명시한
+     "PROVISIONAL이면 page-type 종속 check를 확정 판정하지 않는다" 계약 위반)
+     인데, 이번 merge로 GEO_FACT 축까지 전염된 것이었다. SEO 축에서도
+     이번에 처음 고쳤다.
+  3. `lib/v2/checks/seo.ts`의 두 evaluator에 `pageType.assignment !==
+     "AUTO_ASSIGNED"` 가드를 추가해 직접 수정. 재현 테스트로 수정 확인
+     (PROVISIONAL 케이스에서 두 check 모두 UNKNOWN으로 일치).
+  4. **부수 효과 발견**: F05(`05-article-without-date.html`)의 Page Type
+     confidence가 0.8333(PROVISIONAL)임을 확인 — 날짜 신호가 ARTICLE_BLOG
+     confidence 계산에도 기여하는 신호라, 날짜를 지우면 SEO 날짜 판정뿐
+     아니라 Page Type confidence 자체가 0.85 문턱 아래로 떨어진다. 수정 후
+     F05의 `SR-SEO-DATE`는 확정 FAIL이 아니라 UNKNOWN이 되어 오히려 SEO
+     비율 점수가 F03보다 높아진다 — "F03 > F05" pinned 기대가 이 버그를
+     전제로 했던 것임을 확인하고 `tests/v2/scoring.test.ts`의 해당 테스트를
+     새 계약을 검증하도록 재작성했다(왜 바뀌었는지 테스트 내부에 주석으로 남김).
+* **검증 결과(Claude 재확인, 수정 후)**: Vitest **121/121 PASS**(수정된
+  scoring.test.ts 케이스 포함), TypeScript **0 errors**, ESLint **0
+  errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
 
 ### [v2-page-type-category-listing] CATEGORY_LISTING Page Type 신호 추가 — 2026-08-20
 * **담당 AI**: Antigravity (Google DeepMind Team)

@@ -210,12 +210,32 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
 
   "AC-SEO-DATE-APPLICABLE": input => {
     if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown", input.pageType.evidenceIds);
+    // PROVISIONAL(AUTO_ASSIGNED 아님)이면 "이 page type이 날짜를 요구하는가"조차
+    // 확정적으로 답할 수 없다(applicability.ts §계약과 동일 원칙: confidence
+    // >= 0.85일 때만 page type 기반 적용성을 확정한다). 검수 중 실측으로 확인한
+    // 버그 수정 — 이전에는 assignment를 안 보고 type만 봐서 PROVISIONAL 페이지도
+    // AUTO_ASSIGNED처럼 확정 판정했다.
+    if (input.pageType.assignment !== "AUTO_ASSIGNED") {
+      return classificationUncertain(
+        `page-type-${input.pageType.assignment.toLowerCase()}-cannot-confirm-date-applicability`,
+        input.pageType.evidenceIds,
+      );
+    }
     const applicable = input.pageType.type === "ARTICLE_BLOG" || input.pageType.type === "DOCUMENTATION";
     return result("PASS", `applicable:${applicable}`, [], input.pageType.evidenceIds);
   },
 
   "AC-SEO-DATE-PRESENT": input => {
     if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown-cannot-determine-date-applicability", input.pageType.evidenceIds);
+    // 위와 동일한 이유. SR-SEO-DATE(datePassthrough)와 SR-GF-AUTHOR-DATE(date.signal
+    // 사고형 중복 정리 이후 이 check를 재사용) 양쪽 다 이 판정에 의존하므로, 여기서
+    // PROVISIONAL을 확정 FAIL로 잘못 내리면 두 축 모두에 전염된다.
+    if (input.pageType.assignment !== "AUTO_ASSIGNED") {
+      return classificationUncertain(
+        `page-type-${input.pageType.assignment.toLowerCase()}-cannot-confirm-date-applicability`,
+        input.pageType.evidenceIds,
+      );
+    }
     const dateRelevant = input.pageType.type === "ARTICLE_BLOG" || input.pageType.type === "DOCUMENTATION";
     if (!dateRelevant) return na("date-not-required-for-page-type", [], input.pageType.evidenceIds);
     const fact = f(input, "date.signal");

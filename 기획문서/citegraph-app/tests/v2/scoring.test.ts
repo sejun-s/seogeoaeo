@@ -111,8 +111,27 @@ describe("Expected Ordering — fixture-expected-outcomes.md", () => {
     expect(await seoScore("01-clean-homepage.html")).toBeGreaterThan((await seoScore("02-problematic-homepage.html"))!);
   });
 
-  it("SEO: F03 article > F05 article without date", async () => {
-    expect(await seoScore("03-article.html")).toBeGreaterThan((await seoScore("05-article-without-date.html"))!);
+  it("SEO: F05(날짜 없음)는 SR-SEO-DATE가 확정 FAIL이 아니라 UNKNOWN이라 F03보다 낮지 않다", async () => {
+    // 이전 기대(F03 > F05)는 검수 중 발견한 버그(AC-SEO-DATE-PRESENT가
+    // pageType.assignment를 안 보고 type만 봐서 PROVISIONAL 페이지도
+    // 확정 FAIL로 채점했음)를 전제로 한 것이었다. 그 버그를 고치고 나니
+    // F05는 실제로 PROVISIONAL(0.8333 — date.signal이 ARTICLE_BLOG
+    // confidence에도 기여하는 신호라, 날짜가 없으면 confidence 자체가
+    // 0.85 문턱 아래로 떨어진다)이 되고, applicability.ts의 계약("PROVISIONAL
+    // 이면 page-type 종속 check를 확정 판정하지 않는다")에 따라 SR-SEO-DATE가
+    // UNKNOWN으로 정직하게 빠진다. UNKNOWN은 measured 분모에서 빠지므로
+    // 오히려 F05의 비율 점수가 F03보다 높아질 수 있다 — "날짜가 없으면 무조건
+    // 낮은 점수"가 아니라 "날짜가 없으면 그 항목을 판단 못 함"이 이 엔진의
+    // 정직한 계약이다. F03(AUTO_ASSIGNED, 날짜 있음)이 확정 PASS로 3점을
+    // 벌고, F05(PROVISIONAL)는 그 3점이 통째로 분모·분자에서 빠진다는
+    // 사실만 확인한다.
+    const f03 = await analyze("03-article.html");
+    const f05 = await analyze("05-article-without-date.html");
+    const f05DateRule = f05.seo.rules.find(r => r.ruleId === "SR-SEO-DATE");
+    expect(f05.pageType.assignment).toBe("PROVISIONAL");
+    expect(f05DateRule?.result).toBe("UNKNOWN");
+    expect(f03.pageType.assignment).toBe("AUTO_ASSIGNED");
+    expect(f03.seo.rules.find(r => r.ruleId === "SR-SEO-DATE")?.result).toBe("PASS");
   });
 
   it("SEO: F06 product > F12 invalid structured data", async () => {
