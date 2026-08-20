@@ -59,8 +59,10 @@ const SCHEMA_TYPE_MAP: Readonly<Record<string, PageType>> = {
   AboutPage: "CONTACT_ABOUT",
 };
 
+const BARE_LISTING_PATTERN = /^\/(blog|articles?|news|posts?|insights?)\/?$/i;
+const ARTICLE_SLUG_PATTERN = /^\/(blog|articles?|news|posts?|insights?)\/.+/i;
+
 const PATH_MAP: ReadonlyArray<{ pattern: RegExp; type: PageType }> = [
-  { pattern: /^\/(blog|articles?|news|posts?|insights?)(\/|$)/i, type: "ARTICLE_BLOG" },
   { pattern: /^\/(docs?|documentation|guides?|reference|manual|help)(\/|$)/i, type: "DOCUMENTATION" },
   { pattern: /^\/(products?|shop|store|item)(\/|$)/i, type: "PRODUCT" },
   { pattern: /^\/(services?|solutions?)(\/|$)/i, type: "SERVICE" },
@@ -132,6 +134,14 @@ export function classifyPageType(index: FactIndex): PageTypeResult {
   let pathMatch: { pattern: RegExp; type: PageType } | undefined;
   if (path === "/" || path === "") {
     push("HOMEPAGE", 4, "URL_PATH", "path:root");
+  } else if (BARE_LISTING_PATTERN.test(path)) {
+    // /blog, /news, /articles 등 키워드 세그먼트 하나로 끝나는 경로는 글 목록 피드다
+    pathMatch = { pattern: BARE_LISTING_PATTERN, type: "CATEGORY_LISTING" };
+    push("CATEGORY_LISTING", 3, "URL_PATH", "path:bare-listing-root");
+  } else if (ARTICLE_SLUG_PATTERN.test(path)) {
+    // /blog/some-slug 등 추가 세그먼트가 붙으면 개별 글이다
+    pathMatch = { pattern: ARTICLE_SLUG_PATTERN, type: "ARTICLE_BLOG" };
+    push("ARTICLE_BLOG", 3, "URL_PATH", "path:article-slug");
   } else {
     pathMatch = PATH_MAP.find(entry => entry.pattern.test(path));
     if (pathMatch) push(pathMatch.type, 3, "URL_PATH", `path:${pathMatch.pattern.source.slice(3, 20)}`);
@@ -142,22 +152,21 @@ export function classifyPageType(index: FactIndex): PageTypeResult {
     | { article?: number; form?: number; address?: number }
     | undefined;
 
-  // element:article과 "article+multi-h2+paragraphs" 구조 신호는 둘 다
-  // landmark.article 하나에서 파생된다. 예전에는 둘 다 독립 signal로
-  // 더해서(2+3=5) 같은 근거를 두 번 세었다 — 하나의 tiered signal로
-  // 합친다: <article> 요소만 있으면 약한 신호(2), H2/문단 구조까지
-  // 확인되면 강한 신호(3)로 교체한다(가산 아님). schema 신호가 있으면
-  // (TechArticle 등) 적용하지 않는다 — 확정 신호를 구조 신호가 잠식하면
-  // 안 된다는 기존 원칙은 유지한다.
+  const articleCount = landmark?.article ?? 0;
   const headingNodes = index.all("heading.node");
   const h2Count = headingNodes.filter(node => (node.value as { level?: number }).level === 2).length;
   const paragraphCount = index.all("content.paragraph").length;
-  if ((landmark?.article ?? 0) > 0) {
+
+  if (articleCount === 1) {
+    // 본문 하나를 감싸는 단일 article인 경우에만 ARTICLE_BLOG 후보로 삼는다
     if (schemaTypes.length === 0 && h2Count >= 2 && paragraphCount >= h2Count) {
-      push("ARTICLE_BLOG", 3, "DOM_STRUCTURE", "structure:article+multi-h2+paragraphs");
+      push("ARTICLE_BLOG", 3, "DOM_STRUCTURE", "structure:single-article+multi-h2+paragraphs");
     } else {
-      push("ARTICLE_BLOG", 2, "DOM_STRUCTURE", "element:article");
+      push("ARTICLE_BLOG", 2, "DOM_STRUCTURE", "element:single-article");
     }
+  } else if (articleCount >= 3) {
+    // 글 목록/피드 페이지에서 3개 이상의 미리보기 카드가 각각 article로 감싸진 패턴
+    push("CATEGORY_LISTING", 3, "DOM_STRUCTURE", "structure:repeated-article-elements");
   }
 
   // author+date 동시 존재는 DOM 구조가 아니라 provenance 메타데이터 신호다

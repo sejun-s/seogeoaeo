@@ -119,3 +119,31 @@ P1의 실패가 아니라 P1이 정확히 설계된 대로 동작했다는 증�
 
 `channel.io/ko`, `openai.com/index`, `d2.naver.com/home`처럼 서브디렉토리가
 실질적 홈인 경우 루트 도메인 규칙이 작동하지 않아 UNKNOWN으로 떨어진다.
+
+---
+
+## 5. CATEGORY_LISTING 신호 개선(신호 A/B) 적용 후 실전 7개 URL 재실행 (2026-08-20 17:08 KST)
+
+* **실행 시각**: 2026-08-20 17:08 KST (2026-08-20T08:08:01.217Z)
+* **호출 방식**: `fetchAuditDocument` + `analyzeSnapshotV2` 라이브 직접 실행 (`scratch/run-7-category-urls.ts`)
+* **적용된 개선**:
+  1. **신호 A (복수 `<article>` DOM 분기)**: `landmark.article >= 3`일 때 `CATEGORY_LISTING` 3점(`structure:repeated-article-elements`) 부여 및 단일 article 신호 배제.
+  2. **신호 B (bare listing path vs slug 분기)**: `/blog`, `/news` 등 추가 슬러그가 없는 bare 경로는 `CATEGORY_LISTING` 3점(`path:bare-listing-root`)으로 매핑.
+
+### 5.1 CATEGORY_LISTING 7개 표본 Before / After 실측 대조표
+
+| 대상 URL | Human Label | Before (P1 직후) | After (신호 A/B 적용 후) | 판정 변화 및 비고 |
+|---|---|---|---|---|
+| `spartacodingclub.kr/blog` | **CATEGORY_LISTING** | `ARTICLE_BLOG` (0.95 AUTO) | **`CATEGORY_LISTING` (0.95 AUTO)** | **🎉 오분류 완전 해결**: 틀린 확신(Article)에서 올바른 확신(Category Listing)으로 전환 성공 |
+| `tech.kakao.com/blog` | **CATEGORY_LISTING** | `UNKNOWN` (conf 0) | `UNKNOWN` (conf 0.1607) | 상위 1위 대안 후보로 `CATEGORY_LISTING` 진입 |
+| `vercel.com/blog` | **CATEGORY_LISTING** | `UNKNOWN` (conf 0) | `UNKNOWN` (conf 0.3956) | 상위 1위 대안 후보로 `CATEGORY_LISTING` 진입 (conf 0.3956) |
+| `techblog.woowahan.com` | **CATEGORY_LISTING** | `HOMEPAGE` (0.95 AUTO) | `HOMEPAGE` (0.95 AUTO) | 루트 도메인(`techblog.woowahan.com/`)이므로 HOMEPAGE 유지 (블로그 홈 성격의 부분인정) |
+| `helloworld.kurly.com` | **CATEGORY_LISTING** | `UNKNOWN` (conf 0.3265) | `UNKNOWN` (conf 0.3265) | 루트 도메인 특성상 HOMEPAGE 0.3265 / CATEGORY_LISTING 0.1837 |
+| `d2.naver.com/home` | **CATEGORY_LISTING** | `UNKNOWN` (conf 0) | `UNKNOWN` (conf 0) | `/home` 경로로 bare listing 패턴 미해당, UNKNOWN 유지 |
+| `hankyung.com/economy` | **CATEGORY_LISTING** | `UNKNOWN` (conf 0.2857) | `UNKNOWN` (conf 0.2857) | `/economy` 경로로 PATH_MAP 미해당, 과적합 방지 원칙에 따라 UNKNOWN 유지 |
+
+### 5.2 재실행 소견 및 정확도 변화
+- **정답 수**: 0건 → **1건 확정 정답 (14.3%) + 1건 부분 인정 (14.3%)**
+- **핵심 성과**: P1에서 가장 위험했던 실패 사례(`spartacodingclub.kr/blog`가 `ARTICLE_BLOG`로 확신에 차서 오분류되던 버그)가 복수 article 분기(신호 A)와 bare path(신호 B)의 시너지로 정확히 `CATEGORY_LISTING`으로 교정됨.
+- **한계**: `tech.kakao.com/blog`, `vercel.com/blog`는 1위 후보가 `CATEGORY_LISTING`으로 올라왔으나, SATURATION_FLOOR(7점) 대비 신호량(3점) 부족으로 PROVISIONAL(0.60) 문턱에 미달하여 UNKNOWN에 머묾. 향후 추가적인 DOM 피드 구조 신호(예: ItemList 스키마, 링크 밀도 등)의 보강이 필요함.
+

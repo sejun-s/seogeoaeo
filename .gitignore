@@ -26,3 +26,4 @@ coverage/
 outputs/
 test-results/
 .local-corpus/
+scratch/

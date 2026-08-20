@@ -122,3 +122,79 @@ describe("breadcrumb 교차 family 보강(신규 신호)", () => {
     expect(result.confidence).toBeCloseTo(4 / 7, 3);
   });
 });
+
+describe("신호 A: 복수 article vs 단일 article 분기", () => {
+  it("복수 <article> 요소(3개 이상)가 있으면 CATEGORY_LISTING 신호(3점)가 발생한다", async () => {
+    const html = `<!doctype html><html lang="en"><head><title>Feed</title></head>
+      <body>
+        <main>
+          <article><h2>Post 1</h2>${FILLER}</article>
+          <article><h2>Post 2</h2>${FILLER}</article>
+          <article><h2>Post 3</h2>${FILLER}</article>
+        </main>
+      </body></html>`;
+
+    const result = await classify("https://fixtures.test/no-path-match-feed", html);
+    // 3점만 있어야 한다(3/7≈0.4286). 1개일 때의 ARTICLE_BLOG 신호가 아닌 CATEGORY_LISTING이어야 한다.
+    expect(result.assignment).toBe("UNKNOWN");
+    expect(result.alternatives[0]?.type).toBe("CATEGORY_LISTING");
+    expect(result.alternatives[0]?.confidence).toBeCloseTo(3 / 7, 3);
+    // ARTICLE_BLOG 신호는 발생하지 않아야 한다
+    expect(result.alternatives.some(a => a.type === "ARTICLE_BLOG")).toBe(false);
+  });
+
+  it("단일 <article> 요소(1개)일 때는 ARTICLE_BLOG 신호가 유지된다", async () => {
+    const html = `<!doctype html><html lang="en"><head><title>Single Post</title></head>
+      <body>
+        <main>
+          <article><h2>Section 1</h2>${FILLER}<h2>Section 2</h2>${FILLER}</article>
+        </main>
+      </body></html>`;
+
+    const result = await classify("https://fixtures.test/no-path-match-single", html);
+    expect(result.alternatives[0]?.type).toBe("ARTICLE_BLOG");
+    expect(result.alternatives.some(a => a.type === "CATEGORY_LISTING")).toBe(false);
+  });
+});
+
+describe("신호 B: bare listing path vs article slug path 분기", () => {
+  it("/blog 또는 /news 처럼 추가 슬러그가 없는 bare path는 CATEGORY_LISTING(3점)으로 매핑된다", async () => {
+    const html = `<!doctype html><html lang="en"><head><title>Blog List</title></head>
+      <body><div>${FILLER}</div></body></html>`;
+
+    const blogResult = await classify("https://fixtures.test/blog", html);
+    expect(blogResult.alternatives[0]?.type).toBe("CATEGORY_LISTING");
+    expect(blogResult.alternatives[0]?.confidence).toBeCloseTo(3 / 7, 3);
+
+    const newsResult = await classify("https://fixtures.test/news/", html);
+    expect(newsResult.alternatives[0]?.type).toBe("CATEGORY_LISTING");
+    expect(newsResult.alternatives[0]?.confidence).toBeCloseTo(3 / 7, 3);
+  });
+
+  it("/blog/some-article-slug 처럼 추가 슬러그가 있는 경로는 ARTICLE_BLOG(3점)으로 매핑된다", async () => {
+    const html = `<!doctype html><html lang="en"><head><title>Blog Post</title></head>
+      <body><div>${FILLER}</div></body></html>`;
+
+    const slugResult = await classify("https://fixtures.test/blog/how-to-optimize-seo", html);
+    expect(slugResult.alternatives[0]?.type).toBe("ARTICLE_BLOG");
+    expect(slugResult.alternatives[0]?.confidence).toBeCloseTo(3 / 7, 3);
+  });
+
+  it("bare path(/blog) + 복수 article(3개)이 결합되면 CATEGORY_LISTING PROVISIONAL로 판정된다", async () => {
+    const html = `<!doctype html><html lang="en"><head><title>Tech Blog</title></head>
+      <body>
+        <main>
+          <article><h2>Article 1</h2>${FILLER}</article>
+          <article><h2>Article 2</h2>${FILLER}</article>
+          <article><h2>Article 3</h2>${FILLER}</article>
+        </main>
+      </body></html>`;
+
+    const result = await classify("https://fixtures.test/blog", html);
+    // path(3점) + DOM repeated-article(3점) = 6점 (6/7 ≈ 0.8571 >= 0.85 -> AUTO_ASSIGNED)
+    expect(result.type).toBe("CATEGORY_LISTING");
+    expect(result.assignment).toBe("AUTO_ASSIGNED");
+    expect(result.confidence).toBeCloseTo(6 / 7, 3);
+  });
+});
+

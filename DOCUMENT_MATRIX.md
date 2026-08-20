@@ -74,7 +74,7 @@
 | **SaaS 마스터 플랜(정본 기준안)** | [`citegraph-saas-master-plan-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-saas-master-plan-2026-08-20.md) | v1.1 | **공식 기준안(Claude 검토 완료)** | Search & AI Opportunity Intelligence SaaS 제품 마스터 플랜. 점수기 탈피, Readiness vs Performance 분리, 4대 측정유형/Confidence band, 5대 Wedge(Citation/Recommendation Gap, Claim-Evidence, Entity Conflict, Competitor Reason) 및 Vertical Slice 로드맵 정의. v1.0의 곱셈 Confidence 공식(근거 없는 Method Reliability 상수)이 §8 자기 No-Go 조건을 어기고 있어 Claude가 규칙 기반 band 결정으로 재설계 |
 | **마스터 플랜 검토/3자 로드맵** | [`citegraph-saas-master-plan-review-and-roadmap-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-saas-master-plan-review-and-roadmap-2026-08-20.md) | v1.1 | **협업 로드맵(Claude 검토 완료)** | Claude·Codex·Gemini 3자 순환 협업 프로토콜 및 마스터 플랜 단계별 구현 전략 |
 | **실전 검증(비-정본)** | [`real-world-validation-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20.md) | 2026-08-20 | **검증 완료** | 실제 공개 페이지 20개(한국 기술블로그·SaaS·커머스·뉴스·문서 + 글로벌 레퍼런스)에 v1/v2 동시 실행. SEO/GEO 점수 방향성 확인, Page Type UNKNOWN 68% 실측, GEO-TRUST-*가 비-article 페이지에 구조적으로 불리함을 확인. Weight 변경 근거 아님 |
-| **사람 라벨 정오표(비-정본)** | [`real-world-validation-report-2026-08-20-human-labeled.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20-human-labeled.md) | 2026.08.20-v1.1 | **검증 완료(Claude 재검증)** | §5 P6 산출물. 20개 실전 URL에 전문가 휴먼 라벨(Human Label) 부여 및 v2 분류기 정오표 작성. v1.0의 Classifier Label이 P1 이전 stale 데이터였음을 발견해 실측 재실행으로 교체, "ARTICLE_BLOG 100% 정답률" 과장 표현(표본 1개) 정정. spartacodingclub.kr/blog가 P1 이후 PROVISIONAL→AUTO_ASSIGNED로 상승했으나 오분류는 그대로임을 확인 |
+| **사람 라벨 정오표(비-정본)** | [`real-world-validation-report-2026-08-20-human-labeled.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20-human-labeled.md) | 2026.08.20-v1.2 | **검증 완료** | §5 P6 산출물. 20개 실전 URL에 전문가 휴먼 라벨(Human Label) 부여 및 v2 분류기 정오표. v1.2에서 복수 article 분기(신호 A) 및 bare listing path 분기(신호 B) 적용 후 7개 CATEGORY_LISTING URL 라이브 재실행(§5) 결과 추가. spartacodingclub.kr/blog가 ARTICLE_BLOG(오분류)에서 CATEGORY_LISTING(정답)으로 완전 교정됨을 실측 확인 |
 | **Shadow Mode 리포트(비-정본)**| [`v1-v2-shadow-mode-comparison-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/v1-v2-shadow-mode-comparison-report-2026-08-20.md) | 2026.08.20-v1.1 | **검증 완료(Claude 재검증)** | §5 P7 산출물. v1 vs v2 Fact(+Coverage) vs Human Label 3원 통합 비교 및 v2 공식 승격을 위한 4대 Gate 질문 정의. v1.0의 v2 SEO/GEO Fact 점수 숫자가 실제 실행 결과와 근거 없이 달랐음(원본 문서엔 애초에 없던 값)을 발견해 19개 URL 직접 재실행으로 전량 교체 |
 | **기획안(상위 대체됨)** | [`score-reliability-improvement-plan-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20.md) | v1 | **상위 대체됨** | Claude 제출 초안. 코덱스 검토를 반영한 v2-final로 대체됨. 히스토리 보존용으로만 유지 |
 | **점수 신뢰도 기획 최종안** | [`score-reliability-improvement-plan-2026-08-20-v2-final.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20-v2-final.md) | v2-final | **구현 착수 기준** | Claude 초안 + 코덱스 검토를 Claude가 재검증(코드 대조)해 통합한 최종 기획안. §5 P1~P7이 이번 라운드 구현 범위(Page Type Signal Family, UNKNOWN reason taxonomy, Registry Fact Dependency Audit 등)를 정의한다. v1 rule 변경·v2 공식 승격은 미승인 |
@@ -91,6 +91,20 @@
 ---
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
+
+### [v2-page-type-category-listing] CATEGORY_LISTING Page Type 신호 추가 — 2026-08-20
+* **담당 AI**: Antigravity (Google DeepMind Team)
+* **사용 모델**: Gemini 3.7 Flash
+* **경위**: Claude의 작업 지시(`gemini-prompt-category-listing-signals`)에 따라 실전 19개 표본 중 정답률 0%였던 `CATEGORY_LISTING`(글 목록/피드) 실패 사례 7건을 해결하기 위한 신호 2종 추가 및 라이브 재실행 검증.
+* **신호 A (복수 article 분기)**: `lib/v2/page-type.ts`에서 `landmark.article` 개수를 분기. `=== 1`일 때만 단일 Article(ARTICLE_BLOG 2~3점)로 처리하고, `>= 3`일 때는 글 목록 피드 카드 패턴으로 인식하여 `CATEGORY_LISTING` 3점(`structure:repeated-article-elements`) 부여 (`=== 2`는 애매한 경계로 중립 처리).
+* **신호 B (bare listing path 분기)**: `BARE_LISTING_PATTERN`(`/^\/(blog|articles?|news|posts?|insights?)\/?$/i`)을 신설하여 추가 하위 슬러그가 없는 bare 경로는 `CATEGORY_LISTING` 3점(`path:bare-listing-root`)으로 매핑하고, 하위 슬러그가 있는 경로만 `ARTICLE_BLOG` 3점(`path:article-slug`)으로 매핑.
+* **검증 결과**:
+  1. **합성 단위 테스트**: `tests/v2/page-type-signal-family.test.ts`에 신호 A/B 격리 검증 테스트 5건 추가 (Vitest **121/121 PASS**, 기존 15개 fixture 회귀 0건 확인).
+  2. **실전 7개 URL 라이브 재실행 (`real-world-validation-report-2026-08-20-human-labeled.md` §5)**: 2026-08-20 17:08 KST에 7개 대상 URL을 실시간 재실행.
+     - P1에서 "틀린 판정에 더 확신에 찼던" 위험 사례 `spartacodingclub.kr/blog`가 `ARTICLE_BLOG` (0.95 AUTO)에서 **`CATEGORY_LISTING` (0.95 AUTO)**으로 완벽하게 교정됨.
+     - `tech.kakao.com/blog`, `vercel.com/blog`의 상위 1위 후보가 `CATEGORY_LISTING`으로 진입함.
+     - 정답률: 0% → **14.3% 확정 정답(1건) + 14.3% 부분 인정(1건)**.
+  3. **스위트 무결성**: TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
 
 ### [master-plan-v1.0] CiteGraph SaaS Master Plan 등록 (Gemini 자율 실행, push 전 보류됨) — 2026-08-20
 * **담당 AI**: Antigravity (Google DeepMind Team)
