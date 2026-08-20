@@ -105,6 +105,15 @@
      - `tech.kakao.com/blog`, `vercel.com/blog`의 상위 1위 후보가 `CATEGORY_LISTING`으로 진입함.
      - 정답률: 0% → **14.3% 확정 정답(1건) + 14.3% 부분 인정(1건)**.
   3. **스위트 무결성**: TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
+* **Claude 검수(2026-08-20 17:1x)**: `git add`를 파일 하나로 좁혀 실행했는데도
+  Gemini가 이미 스테이징해둔 이 변경분이 이전 커밋(`2901c2f`, 원래는 2순위
+  인계 프롬프트 커밋이었음)에 같이 딸려가 push됐다 — 커밋 메시지가 이
+  변경을 설명하지 않는 상태로 원격에 올라간 것을 뒤늦게 발견해 이 항목으로
+  바로잡는다. 코드 diff를 `e60afb9`(P1 시점) 대비 전체 확인, `spartacodingclub.
+  kr/blog`(CATEGORY_LISTING 0.95 AUTO)와 `tech.kakao.com/blog`(conf 0.1607)를
+  직접 라이브 호출로 재확인해 보고서 §5 수치와 정확히 일치함을 확인, Vitest
+  121/121·TypeScript 0 errors·ESLint 0 errors·build·Playwright 6/6 전부
+  재실행 통과. 신호 A/B 구현과 테스트, §5 재실행 데이터 전부 신뢰할 수 있음.
 
 ### [master-plan-v1.0] CiteGraph SaaS Master Plan 등록 (Gemini 자율 실행, push 전 보류됨) — 2026-08-20
 * **담당 AI**: Antigravity (Google DeepMind Team)
