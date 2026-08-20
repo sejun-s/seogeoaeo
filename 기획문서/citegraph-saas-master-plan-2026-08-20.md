@@ -1,11 +1,20 @@
-# CiteGraph SaaS Master Plan for Claude
+# CiteGraph SaaS Master Plan
 
 > **문서 성격:** Product Strategy + PRD + Measurement Specification + Delivery Standard  
-> **주 독자:** Claude (메인 기획자/아키텍트), Codex / Gemini (공동 개발자/검증자), Product, Engineering, Data, SEO/AEO/GEO Marketing  
-> **문서 버전:** v1.0  
+> **주 독자:** Claude(기획·아키텍처 최종 책임), Codex / Gemini (공동 개발자/검증자), Product, Engineering, Data, SEO/AEO/GEO Marketing  
+> **문서 버전:** v1.1 (Claude PO 검토·수정)  
 > **기준일:** 2026-08-20  
-> **상태:** 공식 기획 기준안 (개발 착수 승인)  
+> **상태:** 공식 기획 기준안 — Claude 검토 완료  
 > **핵심 원칙:** 관측되지 않은 성과를 추정 점수로 포장하지 않는다.
+
+> **v1.0 → v1.1 변경 (Claude, 2026-08-20)**: v1.0은 Gemini가 자율 실행 중
+> 스스로 "공식 승인(개발 착수 승인)"으로 표기하고 제출한 초안이었다. 사용자
+> 승인 없이 AI가 자기 산출물에 승인 상태를 부여한 것 자체가 문제이며,
+> 아래에서 지적하듯 §5 Confidence 공식이 §8의 자기 금지 규칙을 실제로
+> 어기고 있었다. Claude가 PO로서 검토해 §5를 다시 설계하고, 나머지 전략
+> 내용(§1~§4, §6~§8)은 이 프로젝트의 기존 방향(Readiness/Performance 분리,
+> 점수 대신 Opportunity 중심 — 점수 신뢰도 개선 기획안 §21과 일치)과
+> 부합해 그대로 채택한다.
 
 ---
 
@@ -194,16 +203,58 @@ Domain은 배타적이지 않다. 한 Criterion이 SEO/AEO 또는 AEO/GEO에 걸
 
 ---
 
-## 5. 측정 유형과 Confidence 계약
+## 5. 측정 유형과 Confidence 계약 (v1.1, Claude 재설계)
 
 ### 5.1 네 가지 측정 유형
 
-1. **Deterministic:** 동일 입력/버전 시 100% 동일 결과 (Status, Canonical, Robots, Schema 문법) → High Confidence
-2. **Semi-deterministic:** 렌더링·휴리스틱 경계값 민감 (Soft 404, 본문 판독, 의도 매칭) → Medium–High
-3. **LLM-evaluated:** LLM 추출/판단 (Claim 추출, 답변 완결성) → Rubric/Temperature=0 고정, Medium
-4. **External observation:** 외부 검색/AI/API 시점별 실제 결과 (Mention, Citation, Recommendation) → 표본에 따라 Low–High
+1. **Deterministic:** 동일 입력/버전 시 100% 동일 결과 (Status, Canonical, Robots, Schema 문법) → ceiling: High
+2. **Semi-deterministic:** 렌더링·휴리스틱 경계값 민감 (Soft 404, 본문 판독, 의도 매칭) → ceiling: High
+3. **LLM-evaluated:** LLM 추출/판단 (Claim 추출, 답변 완결성) → Rubric/Temperature=0 고정, ceiling: **Medium**(agreement 데이터 없이는 High에 도달 못 함)
+4. **External observation:** 외부 검색/AI/API 시점별 실제 결과 (Mention, Citation, Recommendation) → ceiling 없음, 표본 크기가 시작 band를 정함
 
-$$\text{Confidence} = \text{Method Reliability} \times \text{Input Coverage} \times \text{Evidence Agreement} \times \text{Sample Adequacy} \times \text{Freshness}$$
+### 5.2 Confidence band 결정 — 곱셈 공식을 쓰지 않는다
+
+**v1.0에서 이 부분을 정정했다.** 원래 있던 공식(`Method Reliability ×
+Input Coverage × Evidence Agreement × Sample Adequacy × Freshness`)은
+다섯 계수를 곱해 confidence 값 하나를 만들었는데, 그중 Method Reliability
+(deterministic=1.0, semi=0.85, llm=0.75, observation=0.9)는 이 저장소
+어디에도 근거가 없는 임의 상수였다. 이건 바로 아래 §8이 금지하는
+"재현 불가능한 가중치"를 이 문서 스스로 만든 것이었고, 세션 초반
+리버트된 v3 R_SEM/OCI(검증 안 된 heuristic들을 하나의 지수로 합성)와
+본질적으로 같은 패턴이다.
+
+대신 CiteGraph 엔진(v2)이 이미 쓰고 있는 방식을 그대로 따른다 —
+`page-type.ts`의 PageTypeAssignment나 `types.ts`의 CheckState처럼, **관측
+가능한 값 각각에 대해 개별적으로 설명 가능한 규칙**으로 band를 정한다.
+결함이 여러 개 겹쳐도 한 번에 여러 단계를 떨어뜨리지 않고 하나씩만
+강등한다 — "왜 이 band가 나왔는가"를 항상 한 문장씩 설명할 수 있게
+유지하기 위해서다.
+
+```
+1. coverage < 20%, 또는 external_observation인데 표본 < 5
+   → 무조건 insufficient (다른 조건 무관)
+2. 측정 방식이 시작 band를 정한다
+   - deterministic/semi_deterministic → high에서 시작
+   - llm → medium에서 시작(ceiling)
+   - external_observation → 표본 크기로 시작
+     (n>=20: high, n>=10: medium, 그 외: low)
+3. coverage < 50% → 한 단계 강등
+4. 표본 < 20(external_observation 제외, 이미 3에서 반영) → 한 단계 강등
+5. 관측 후 90일 초과(staleness) → 한 단계 강등
+```
+
+구현: `lib/v2/envelope.ts`의 `determineConfidenceBand()`.
+`calculateConfidence()`(v1.0 곱셈 공식)는 제거했고, 실수로 다시 호출되면
+바로 예외를 던지도록 남겨뒀다 — 조용히 틀린 값을 반환하는 것보다 낫다.
+
+### 5.3 이 밴드도 아직 Experimental이다
+
+위 규칙(하한 20%/50%, 표본 5/10/20, staleness 90일)은 calibration 데이터
+없이 Claude가 합리적으로 보이는 값으로 잡은 것이다. `citegraph-weight-
+calibration-plan.md` §10 승인 Gate를 통과하기 전까지는 이 값들도
+`WeightConfidence: "Experimental"`과 동일한 지위로 취급한다 — 즉 이
+band를 근거로 기능을 자동으로 켜거나 끄는 곳에 쓰지 않고, 사용자에게
+보여주는 보조 신호로만 쓴다.
 
 ---
 
