@@ -270,14 +270,91 @@ function ScoreSection({
   );
 }
 
+function getActionableSnippet(
+  rule: Rule,
+  extracted: AuditResult["extracted"],
+  finalUrl: string,
+  pageType?: string,
+): { label: string; code: string } | null {
+  if (rule.result !== "FAIL") return null;
+  const ruleId = rule.ruleId || rule.id;
+
+  // Canonical 관련 FAIL
+  if (ruleId === "SEO-TECH-002" || ruleId === "SEO-INDEX-003") {
+    const targetUrl = finalUrl || "https://example.com";
+    return {
+      label: "Canonical 태그 스니펫",
+      code: `<link rel="canonical" href="${targetUrl}">`,
+    };
+  }
+
+  // Schema 관련 FAIL
+  if (ruleId === "SEO-SCHEMA-001" || ruleId === "SEO-SCHEMA-002") {
+    const titleVal = extracted.title || "[페이지 제목을 입력하세요]";
+    const descVal = extracted.metaDescription || "[페이지 설명을 입력하세요]";
+
+    if (pageType === "ARTICLE_BLOG") {
+      return {
+        label: "최소 유효 JSON-LD 스니펫 (Article)",
+        code: `<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Article",\n  "headline": "${titleVal}",\n  "description": "${descVal}",\n  "author": {\n    "@type": "Person",\n    "name": "[저자 이름 - 필수 입력]"\n  },\n  "datePublished": "[발행일: YYYY-MM-DD - 필수 입력]"\n}\n</script>`,
+      };
+    }
+
+    if (pageType === "HOMEPAGE") {
+      return {
+        label: "최소 유효 JSON-LD 스니펫 (WebSite)",
+        code: `<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "WebSite",\n  "name": "${titleVal}",\n  "url": "${finalUrl || 'https://example.com'}"\n}\n</script>`,
+      };
+    }
+
+    return {
+      label: "최소 유효 JSON-LD 스니펫 (WebPage)",
+      code: `<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "WebPage",\n  "name": "${titleVal}",\n  "description": "${descVal}",\n  "url": "${finalUrl || 'https://example.com'}"\n}\n</script>`,
+    };
+  }
+
+  return null;
+}
+
 function FindingRow({
   rule,
   defaultOpen,
+  extracted,
+  finalUrl,
+  pageType,
 }: {
   rule: Rule;
   defaultOpen: boolean;
+  extracted: AuditResult["extracted"];
+  finalUrl: string;
+  pageType?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const snippet = getActionableSnippet(rule, extracted, finalUrl, pageType);
+
+  async function copyText(text: string, key: string) {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopiedKey(key);
+      setTimeout(() => {
+        setCopiedKey((curr) => (curr === key ? null : curr));
+      }, 2000);
+    } catch {
+      // Ignore clipboard error
+    }
+  }
+
   return (
     <div className={`finding ${rule.result.toLowerCase()}`}>
       <button
@@ -315,9 +392,35 @@ function FindingRow({
             ))}
           </div>
           <div>
-            <h4>Recommendation</h4>
+            <div className="recommendation-header">
+              <h4>Recommendation</h4>
+              <button
+                type="button"
+                className={`copy-btn ${copiedKey === "rec" ? "copied" : ""}`}
+                onClick={() => copyText(rule.recommendation, "rec")}
+                aria-label="Recommendation 복사"
+              >
+                {copiedKey === "rec" ? "복사됨" : "복사"}
+              </button>
+            </div>
             <p>{rule.recommendation}</p>
           </div>
+          {snippet && (
+            <div className="snippet-box">
+              <div className="snippet-header">
+                <h4>{snippet.label}</h4>
+                <button
+                  type="button"
+                  className={`copy-btn ${copiedKey === "snippet" ? "copied" : ""}`}
+                  onClick={() => copyText(snippet.code, "snippet")}
+                  aria-label={`${snippet.label} 복사`}
+                >
+                  {copiedKey === "snippet" ? "복사됨" : "코드 복사"}
+                </button>
+              </div>
+              <pre className="snippet-code"><code>{snippet.code}</code></pre>
+            </div>
+          )}
           <details className="rule-technical">
             <summary>고급 규칙 정보</summary>
             <code>{rule.ruleId || rule.id}</code>
@@ -538,6 +641,9 @@ function AuditWorkspace() {
                       key={rule.id}
                       rule={rule}
                       defaultOpen={defaultOpen}
+                      extracted={data.extracted}
+                      finalUrl={data.finalUrl}
+                      pageType={v2Data?.pageType?.type}
                     />
                   );
                 });

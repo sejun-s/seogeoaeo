@@ -62,8 +62,15 @@ body { background: var(--canvas); }
 .finding.pass .finding-row { border-left: 3px solid transparent; }
 .evidence { align-items: flex-start; flex-direction: column; }
 .evidence-technical summary, .rule-technical summary { color: var(--muted); cursor: pointer; font-size: 10px; }
-.evidence-technical code, .rule-technical code { color: var(--geo); display: block; font: 10px ui-monospace, monospace; margin-top: 3px; overflow-wrap: anywhere; }
-.rule-technical { grid-column: 1 / -1; }
+.evidence-technical code, .rule-technical { grid-column: 1 / -1; }
+.recommendation-header, .snippet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.copy-btn { background: #fff; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); cursor: pointer; font: 700 11px ui-monospace, monospace; padding: 3px 8px; line-height: 1.2; }
+.copy-btn:hover { background: var(--soft); border-color: #aeb7c0; }
+.copy-btn.copied { background: var(--mint-soft); border-color: var(--mint-dark); color: var(--mint-dark); }
+.snippet-box { background: #fff; border: 1px solid var(--line); border-radius: 4px; margin-top: 10px; padding: 10px 12px; grid-column: 1 / -1; }
+.snippet-box h4 { margin: 0; }
+.snippet-code { background: var(--soft); border: 1px solid #edf0f2; border-radius: 3px; color: var(--ink); font: 11px/1.4 ui-monospace, monospace; margin: 6px 0 0; max-height: 180px; overflow-x: auto; padding: 8px 10px; white-space: pre-wrap; word-break: break-all; }
+
 /* 사이드바(248px)가 콘텐츠 폭을 그만큼 줄이는데, globals.css의 좁은 화면
    규칙은 700px에서만 켜진다. 그 사이(800~1440px대) 폭에서 score-section의
    고정 310px 컬럼과 finding-row의 minmax(300px,1fr)가 남은 폭보다 커져

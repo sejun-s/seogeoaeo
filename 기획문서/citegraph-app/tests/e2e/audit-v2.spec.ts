@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("v1과 v2 결과, evidence, 오류 상태를 실제 브라우저에서 검증한다", async ({ page }, testInfo) => {
+test("v1과 v2 결과, evidence, 오류 상태 및 클립보드 복사 동작을 실제 브라우저에서 검증한다", async ({ page }, testInfo) => {
   const consoleErrors: string[] = [];
   const pageErrors: string[] = [];
   const unexpectedResponses: string[] = [];
@@ -14,6 +14,9 @@ test("v1과 v2 결과, evidence, 오류 상태를 실제 브라우저에서 검�
       unexpectedResponses.push(`${response.status()} ${response.url()}`);
     }
   });
+
+  // 클립보드 권한 부여
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
   await page.route("**/api/audits**", async (route) => {
     const body = route.request().postDataJSON() as { url: string };
@@ -40,7 +43,11 @@ test("v1과 v2 결과, evidence, 오류 상태를 실제 브라우저에서 검�
       runId: "run-e2e", auditResultId: "result-e2e", cacheHit: false, finalUrl: "https://example.com/", rulesetVersion: "2026.08.1", engineVersion: "v1.0.0",
       extracted: { title: "Example Domain", metaDescription: "Example fixture", h1: ["Example Domain"], canonical: "https://example.com/", robots: "index,follow", schemaTypes: [], lang: "en" },
       scores: { seo: { score: 82, categories: [{ name: "Technical SEO", score: 30, maxScore: 35 }] }, geoReadiness: { score: 68, categories: [{ name: "Answerability", score: 18, maxScore: 30 }] } },
-      findings: [{ id: "finding-1", ruleId: "SEO_TITLE", scoreType: "SEO", category: "On-page", title: "Title 확인", description: "Title 규칙 설명", weight: 8, result: "WARN", recommendation: "명확한 title을 사용하세요.", evidence: [{ id: "evidence-1", evidenceCode: "TITLE", field: "title", excerpt: "Example Domain" }] }],
+      findings: [
+        { id: "finding-1", ruleId: "SEO-ONPAGE-001", scoreType: "SEO", category: "On-page", title: "Title 품질", description: "Title 규칙 설명", weight: 8, result: "WARN", recommendation: "20~65자 제목으로 다듬으세요.", evidence: [{ id: "evidence-1", evidenceCode: "TITLE", field: "title", excerpt: "Example Domain" }] },
+        { id: "finding-2", ruleId: "SEO-TECH-002", scoreType: "SEO", category: "Technical SEO", title: "Canonical 존재", description: "대표 URL 선언", weight: 5, result: "FAIL", recommendation: "canonical을 추가하세요.", evidence: [{ id: "evidence-2", evidenceCode: "CANONICAL", field: "canonical", excerpt: "해당 요소 없음" }] },
+        { id: "finding-3", ruleId: "SEO-SCHEMA-001", scoreType: "SEO", category: "Structured Data", title: "JSON-LD 문법", description: "구조화 데이터 파싱", weight: 8, result: "FAIL", recommendation: "유효한 JSON-LD를 추가하세요.", evidence: [{ id: "evidence-3", evidenceCode: "SCHEMA", field: "schema", excerpt: "0개 유효 / 0개 오류" }] },
+      ],
     }) });
   });
   await page.route("**/api/events", async (route) => {
@@ -74,12 +81,44 @@ test("v1과 v2 결과, evidence, 오류 상태를 실제 브라우저에서 검�
   await expect(page.getByText("Result ID", { exact: true })).toBeVisible();
   await expect(page.locator(".v2-reason-list")).toBeVisible();
 
+  // Finding 1 (WARN) - Recommendation 복사 검증
   const firstFinding = page.locator(".finding-row").first();
   await firstFinding.click();
   await expect(firstFinding).toHaveAttribute("aria-expanded", "true");
   await expect(page.locator(".finding-detail").first().getByRole("heading", { name: "Evidence" })).toBeVisible();
   await expect(page.locator(".finding-detail").first().getByRole("heading", { name: "Recommendation" })).toBeVisible();
-  await expect(page.locator(".finding-detail").first().getByText("evidence-1", { exact: true })).toBeHidden();
+
+  const recCopyBtn = page.locator(".finding-detail").first().getByRole("button", { name: "Recommendation 복사" });
+  await expect(recCopyBtn).toBeVisible();
+  await recCopyBtn.click();
+  await expect(recCopyBtn).toHaveText("복사됨");
+
+  const copiedRecText = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copiedRecText).toBe("20~65자 제목으로 다듬으세요.");
+
+  // Finding 2 (Canonical FAIL) - Canonical 스니펫 및 코드 복사 검증
+  await expect(page.getByText("Canonical 태그 스니펫")).toBeVisible();
+  const canonicalSnippet = page.locator(".snippet-code").first();
+  await expect(canonicalSnippet).toContainText('<link rel="canonical" href="https://example.com/">');
+
+  const canonicalCopyBtn = page.getByRole("button", { name: "Canonical 태그 스니펫 복사" });
+  await expect(canonicalCopyBtn).toBeVisible();
+  await canonicalCopyBtn.click();
+  await expect(canonicalCopyBtn).toHaveText("복사됨");
+
+  const copiedCanonicalText = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copiedCanonicalText).toBe('<link rel="canonical" href="https://example.com/">');
+
+  // Finding 3 (Schema FAIL) - JSON-LD 스니펫 및 코드 복사 검증
+  await expect(page.getByText("최소 유효 JSON-LD 스니펫")).toBeVisible();
+  const schemaCopyBtn = page.getByRole("button", { name: /JSON-LD 스니펫.*복사/ });
+  await expect(schemaCopyBtn).toBeVisible();
+  await schemaCopyBtn.click();
+  await expect(schemaCopyBtn).toHaveText("복사됨");
+
+  const copiedSchemaText = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copiedSchemaText).toContain('"@context": "https://schema.org"');
+  expect(copiedSchemaText).toContain("Example Domain");
 
   const overflow = await page.evaluate(() => ({
     document: document.documentElement.scrollWidth - document.documentElement.clientWidth,
