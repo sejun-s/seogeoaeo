@@ -16,6 +16,41 @@ export const REGISTRY_VERSION = "registry-v2-draft.2";
 /** 방법론 §2 공통 상태 계약. v1의 3-상태를 확장한다. */
 export type CheckState = "PASS" | "WARN" | "FAIL" | "N_A" | "UNKNOWN" | "NOT_EVALUATED";
 
+/**
+ * UNKNOWN의 원인 taxonomy(점수 신뢰도 개선 기획안 v2-final §2-2/§3 P2).
+ *
+ * "UNKNOWN이 왜 나왔는가"는 다섯 가지로 갈라진다. 전부 다른 대응이 필요하다:
+ * UNCALIBRATED/UNSUPPORTED는 "의도적으로 판단하지 않음"(정직한 보수적 평가),
+ * EXTRACTION_FAILURE/CLASSIFICATION_UNCERTAIN/INSUFFICIENT_EVIDENCE는
+ * "판단해야 하는데 근거·확신이 부족함"이다. 이 둘을 같은 UNKNOWN으로만 두면
+ * coverage가 낮은 이유를 설명할 수 없다.
+ */
+export type UnknownReason =
+  /** calibration profile이 아직 없어 의도적으로 판정하지 않음(예: title/meta 길이). */
+  | "UNCALIBRATED"
+  /** Fact 추출 자체가 실패함(예: 파싱 오류, 예상치 못한 값 형태). */
+  | "EXTRACTION_FAILURE"
+  /** Page Type이 PROVISIONAL/UNKNOWN이라 이 check의 적용성·판정을 확정할 수 없음. */
+  | "CLASSIFICATION_UNCERTAIN"
+  /** 필요한 Fact가 존재하지 않거나 판정에 필요한 근거가 부족함. */
+  | "INSUFFICIENT_EVIDENCE"
+  /** 기능 자체가 아직 구현되지 않음(예: site-wide corpus, 렌더 스냅샷). */
+  | "UNSUPPORTED";
+
+export const UNKNOWN_REASONS: readonly UnknownReason[] = [
+  "UNCALIBRATED",
+  "EXTRACTION_FAILURE",
+  "CLASSIFICATION_UNCERTAIN",
+  "INSUFFICIENT_EVIDENCE",
+  "UNSUPPORTED",
+];
+
+/** rationaleCode 문자열에서 UNKNOWN taxonomy prefix를 뽑아낸다. prefix가 없으면 null. */
+export function parseUnknownReason(rationaleCode: string): UnknownReason | null {
+  const [prefix] = rationaleCode.split(":", 1);
+  return (UNKNOWN_REASONS as readonly string[]).includes(prefix) ? (prefix as UnknownReason) : null;
+}
+
 /** 점수에 산입되는 상태만 true. N_A/UNKNOWN/NOT_EVALUATED는 measured 분모에서 빠진다. */
 export const MEASURED_STATES: readonly CheckState[] = ["PASS", "WARN", "FAIL"];
 

@@ -7,9 +7,9 @@
 ---
 
 > **프로젝트명**: CiteGraph (`seogeoaeo`)  
-> **최종 갱신일**: 2026-08-19  
-> **작업 담당 AI**: OpenAI Codex  
-> **사용 모델**: GPT-5  
+> **최종 갱신일**: 2026-08-20  
+> **작업 담당 AI**: Claude Sonnet 5  
+> **사용 모델**: Claude Sonnet 5  
 > **문서 관리 목적**: 프로젝트 내 문서 현황, 최신 정본(Canonical) 명세, 변경 이력, AI 작업 기록 및 **문서작업 기본 틀(표준 가이드라인)**을 단일 통합 매트릭스로 관리함.
 
 ---
@@ -72,6 +72,9 @@
 | **기획 검토안(비-정본)** | [`Score criteria table/SEO_GEO_기준표_고도화_기획안.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/SEO_GEO_%EA%B8%B0%EC%A4%80%ED%91%9C_%EA%B3%A0%EB%8F%84%ED%99%94_%EA%B8%B0%ED%9A%8D%EC%95%88.md) | 2026-08-19 | **기획 검토안** | 사용자 제공 `.docx` 원본을 옮김. Expertise 축 신설 등 SEO/GEO 100점 카테고리 전면 재설계 제안. **정본 아님** — 승인 Gate 통과 전 Weight 반영 금지 |
 | **측정 가능성 감사(비-정본)** | [`Score criteria table/expertise-axis-measurability-review.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/expertise-axis-measurability-review.md) | 2026-08-19 | **검토 완료** | 위 기획안 19개 카테고리를 A(이미 측정)/B(FACT 추가 가능)/C(새 인프라 필요)/D(Semantic Engine 필요)로 분류. 연구 인용 3편 실재 확인, 마케팅 사례 수치는 근거로 미사용 권고 |
 | **실전 검증(비-정본)** | [`real-world-validation-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20.md) | 2026-08-20 | **검증 완료** | 실제 공개 페이지 20개(한국 기술블로그·SaaS·커머스·뉴스·문서 + 글로벌 레퍼런스)에 v1/v2 동시 실행. SEO/GEO 점수 방향성 확인, Page Type UNKNOWN 68% 실측, GEO-TRUST-*가 비-article 페이지에 구조적으로 불리함을 확인. Weight 변경 근거 아님 |
+| **기획안(상위 대체됨)** | [`score-reliability-improvement-plan-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20.md) | v1 | **상위 대체됨** | Claude 제출 초안. 코덱스 검토를 반영한 v2-final로 대체됨. 히스토리 보존용으로만 유지 |
+| **점수 신뢰도 기획 최종안** | [`score-reliability-improvement-plan-2026-08-20-v2-final.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20-v2-final.md) | v2-final | **구현 착수 기준** | Claude 초안 + 코덱스 검토를 Claude가 재검증(코드 대조)해 통합한 최종 기획안. §5 P1~P7이 이번 라운드 구현 범위(Page Type Signal Family, UNKNOWN reason taxonomy, Registry Fact Dependency Audit 등)를 정의한다. v1 rule 변경·v2 공식 승격은 미승인 |
+| **Registry 감사 결과(비-정본)** | [`registry-fact-dependency-audit-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/registry-fact-dependency-audit-2026-08-20.md) | 2026-08-20 | **검증 완료** | 위 기획안 §5 P3 산출물. `date.signal`은 SEO/GEO 두 축에서 사실상 동일한 판정 로직으로 중복 계산됨(사고형 중복, 병합 검토 대상), `content.main_text`는 다각도 사용으로 문제 없음을 코드 대조로 확인. Rule Weight 변경 없음(리포트까지만) |
 | **Stage 0 감사(비-정본)** | [`CURRENT_PRODUCT_MAP.md`](file:///c:/workspace/seogeoaeo/CURRENT_PRODUCT_MAP.md) | 2026.08.19-v1.2 | **기획 검토안** | 2026-08-19 | 현재 UI·API·엔진·저장·테스트·운영 경로 지도 |
 | **Stage 0 감사(비-정본)** | [`FEATURE_GAP_MATRIX.md`](file:///c:/workspace/seogeoaeo/FEATURE_GAP_MATRIX.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | 후보 130개 전체 상태·8차원 평가·채택 권고 |
 | **Stage 0 감사(비-정본)** | [`DATA_RELIABILITY_AUDIT.md`](file:///c:/workspace/seogeoaeo/DATA_RELIABILITY_AUDIT.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | 점수·Evidence·재현성·실패 처리 감사 |
@@ -84,6 +87,56 @@
 ---
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
+
+### [v2-eng-p1p2p3] 점수 신뢰도 개선 1차 구현 — 2026-08-20
+* **담당 AI**: Claude Sonnet 5
+* **경위**: 사용자 지시("점수 신뢰도를 위한 현재의 문제를 당신이 코딩할 수 있는
+  기획안으로 구성하라. 바로 개발하지 말고 문서를 남기고 검토를 받아라")에 따라
+  Claude가 기획안(`score-reliability-improvement-plan-2026-08-20.md`)을 먼저
+  제출했고, 코덱스가 검토안을 작성했다. Claude가 그 검토를 코드로 직접 재검증
+  (일부는 이미 구현돼 있음을 확인, 일부는 실제로 놓친 위험을 확인)해
+  `score-reliability-improvement-plan-2026-08-20-v2-final.md`로 통합한 뒤,
+  사용자 승인에 따라 코덱스 검토 없이 Claude가 직접 구현했다.
+* **작업 영역**: `lib/v2/{types,checks/types,checks/seo,checks/geo-fact,
+  checks/index,page-type,reason-distribution}.ts`. v1(`lib/audit.ts`)은
+  전혀 건드리지 않았다.
+* **P2 — UNKNOWN reason taxonomy**: `UnknownReason`(UNCALIBRATED/
+  EXTRACTION_FAILURE/CLASSIFICATION_UNCERTAIN/INSUFFICIENT_EVIDENCE/
+  UNSUPPORTED) 5종을 `lib/v2/types.ts`에 추가하고, `checks/types.ts`의
+  `unknown()` 헬퍼 시그니처를 `(reason, detail, ...)`로 바꿔 모든 호출부가
+  taxonomy를 명시하도록 컴파일러로 강제했다. `lib/v2/reason-distribution.ts`
+  로 DomainScore에서 이 taxonomy별 분포를 집계하는 함수를 추가했다(기존
+  coverage 숫자만으로는 "왜 낮은지" 설명 불가능했던 문제 해결).
+* **P3 — Registry Fact Dependency Audit**: `lib/v2/registry/integrity.ts`의
+  `crossDomainFactTypes`(이미 구현돼 있었음, 새로 만들지 않음)가 찾은
+  `date.signal`/`content.main_text` 2건을 실제 evaluator 코드까지 열어
+  검증. `date.signal`은 SEO(`AC-SEO-DATE-PRESENT`)와 GEO_FACT(`AC-GF-DATE`)
+  양쪽에서 적용 범위(ARTICLE_BLOG/DOCUMENTATION)와 상태 매핑이 완전히 동일한
+  "사고형 중복"임을 확인했다 — 병합은 이번 라운드에 하지 않고 리포트만
+  남겼다(`registry-fact-dependency-audit-2026-08-20.md`).
+* **P1 — Page Type Signal Family**: 코덱스가 지적한 "상관 신호의 confidence
+  중복 상승" 문제를 코드 감사로 실제 재현했다 — 같은 JSON-LD 블록이
+  `"@type": ["Article","NewsArticle"]`처럼 배열로 여러 토큰을 선언하면
+  둘 다 같은 PageType에 매핑돼 5+5=10점으로 이중 계산되고 있었고,
+  `element:article`과 `structure:article+multi-h2+paragraphs` 신호도 같은
+  `landmark.article` fact에서 파생되면서 가산(2+3=5)되고 있었다. 둘 다
+  구조적으로 고쳤다(스키마는 매핑된 PageType별 1회만, DOM article 신호는
+  가산이 아니라 tiered 대체). `SATURATION_FLOOR=7`은 근거 없이 바꾸지
+  않았다(계산 로직만 정직하게 고쳤으므로 confidence가 오히려 낮아지는
+  페이지도 있을 수 있다 — 이건 기존에 부풀려져 있었다는 뜻이다). 신규
+  신호로 BreadcrumbList(이미 추출되고 있던 schema.node 데이터 재사용,
+  새 추출기 없음)를 URL_PATH 신호와 교차 family로 보강하는 로직을
+  추가했다. `og:type` 등 새 추출이 필요한 신호는 이번 라운드 범위 밖으로
+  남겨뒀다.
+* **검증 결과**: Vitest **100/100 PASS**(기존 15개 fixture 회귀 없음 확인,
+  새 테스트 13개 추가: reason-distribution 8개, page-type-signal-family 5개),
+  TypeScript **0 errors**, ESLint **0 errors**(생성 파일 warning 2건은
+  기존과 동일), `vinext build` **PASS**.
+* **하지 않은 것**: 실전 20 URL 재실행(코드 변경이 실제 UNKNOWN rate에
+  미치는 영향 실측), Sensitivity/Monotonicity 테스트 인프라(P4), Frozen
+  Corpus(P5), 사람 라벨 컬럼(P6), v1/v2/사람 비교 리포트(P7)는 기획안
+  §5 범위에는 있었으나 이번 라운드에 완료하지 못했다 — 다음 라운드로
+  이월한다.
 
 ### [문서 전용] SEO/GEO 기준표 고도화 기획안 검토 - 2026-08-19
 * **담당 AI**: Claude Sonnet 5

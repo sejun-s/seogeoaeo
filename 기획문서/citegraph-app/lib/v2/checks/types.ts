@@ -9,7 +9,7 @@
  */
 
 import type { FactIndex } from "../evidence/layer";
-import type { PageTypeResult } from "../types";
+import type { PageTypeResult, UnknownReason } from "../types";
 
 export interface CheckEvalInput {
   index: FactIndex;
@@ -27,9 +27,16 @@ export interface CheckEvalOutput {
 
 export type CheckEvaluator = (input: CheckEvalInput) => CheckEvalOutput;
 
-/** UNKNOWN을 반환하되 정확한 사유를 강제한다. */
-export function unknown(rationaleCode: string, factIds: string[] = [], evidenceIds: string[] = []): CheckEvalOutput {
-  return { state: "UNKNOWN", rationaleCode, factIds, evidenceIds };
+/**
+ * UNKNOWN을 반환하되 정확한 사유를 강제한다.
+ *
+ * reason은 UnknownReason taxonomy 중 하나여야 한다(점수 신뢰도 개선 기획안
+ * v2-final §2-2). detail은 사람이 읽을 구체적 설명이다. rationaleCode는
+ * `${reason}:${detail}` 형태로 합쳐져서 문자열 하나로도 기존 호환성을 유지하고,
+ * 리포트에서는 parseUnknownReason으로 prefix만 뽑아 집계한다.
+ */
+export function unknown(reason: UnknownReason, detail: string, factIds: string[] = [], evidenceIds: string[] = []): CheckEvalOutput {
+  return { state: "UNKNOWN", rationaleCode: `${reason}:${detail}`, factIds, evidenceIds };
 }
 
 export function na(rationaleCode: string, factIds: string[] = [], evidenceIds: string[] = []): CheckEvalOutput {

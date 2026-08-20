@@ -16,6 +16,13 @@ import { na, result, unknown } from "./types";
 const NO_PROFILE = "no-calibrated-length-profile";
 const NO_CORPUS = "no-site-corpus";
 
+/** length heuristic 3개(title/meta/body)는 전부 같은 사유로 UNCALIBRATED다. */
+const uncalibrated = () => unknown("UNCALIBRATED", NO_PROFILE);
+/** site-wide corpus/context가 필요한 check 2개는 기능 미구현이라 UNSUPPORTED다. */
+const unsupported = (detail: string, factIds: string[] = [], evidenceIds: string[] = []) => unknown("UNSUPPORTED", detail, factIds, evidenceIds);
+/** page type이 확정되지 않아 판정 자체가 불가능한 경우는 CLASSIFICATION_UNCERTAIN이다. */
+const classificationUncertain = (detail: string, evidenceIds: string[]) => unknown("CLASSIFICATION_UNCERTAIN", detail, [], evidenceIds);
+
 function f(input: CheckEvalInput, factType: Parameters<CheckEvalInput["index"]["one"]>[0]) {
   return input.index.one(factType);
 }
@@ -86,8 +93,8 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
     return result(length > 0 ? "PASS" : "FAIL", length > 0 ? "title-present" : "title-missing", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
   },
 
-  "AC-SEO-TITLE-LENGTH": () => unknown(NO_PROFILE),
-  "AC-SEO-TITLE-UNIQUE": () => unknown(NO_CORPUS),
+  "AC-SEO-TITLE-LENGTH": () => uncalibrated(),
+  "AC-SEO-TITLE-UNIQUE": () => unsupported(NO_CORPUS),
 
   "AC-SEO-META-PRESENT": input => {
     const fact = f(input, "document.meta_description");
@@ -95,8 +102,8 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
     return result(length > 0 ? "PASS" : "FAIL", length > 0 ? "meta-present" : "meta-missing", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
   },
 
-  "AC-SEO-META-LENGTH": () => unknown(NO_PROFILE),
-  "AC-SEO-META-UNIQUE": () => unknown(NO_CORPUS),
+  "AC-SEO-META-LENGTH": () => uncalibrated(),
+  "AC-SEO-META-UNIQUE": () => unsupported(NO_CORPUS),
 
   "AC-SEO-H1-PRESENT": input => {
     const h1s = input.index.all("heading.node").filter(node => (node.value as { level?: number }).level === 1);
@@ -126,7 +133,7 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
   },
 
   "AC-SEO-INDEX-INTENT": input => {
-    if (input.pageType.type === "UNKNOWN") return unknown("page-type-unknown-cannot-determine-intent", input.pageType.evidenceIds);
+    if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown-cannot-determine-intent", input.pageType.evidenceIds);
     const intent = input.pageType.type === "UTILITY_AUTH" ? "NOT_INDEX_TARGET" : "PUBLIC_INDEX_TARGET";
     return result("PASS", `intent:${intent}`, [], input.pageType.evidenceIds);
   },
@@ -143,7 +150,7 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
     if (!value || (value.count ?? 0) === 0 || !value.valid) {
       return na("canonical-not-declared-or-invalid", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
     }
-    return unknown("no-site-context-for-relation", [fact!.factId], fact!.evidenceIds);
+    return unsupported("no-site-context-for-relation", [fact!.factId], fact!.evidenceIds);
   },
 
   "AC-SEO-SCHEMA-SYNTAX": input => {
@@ -167,7 +174,7 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
     };
     const compatible = types.some(type => GENERIC.has(type) || TYPE_PAGE_MAP[type] === input.pageType.type);
     if (compatible) return result("PASS", "schema-type-compatible", [fact!.factId], fact!.evidenceIds);
-    if (input.pageType.type === "UNKNOWN") return unknown("page-type-unknown-cannot-verify-compatibility", [fact!.factId], fact!.evidenceIds);
+    if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown-cannot-verify-compatibility", fact!.evidenceIds);
     return result("WARN", "schema-type-page-type-mismatch", [fact!.factId], fact!.evidenceIds);
   },
 
@@ -180,7 +187,7 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
     return result(ok ? "PASS" : "FAIL", ok ? "required-properties-complete" : "required-properties-missing", [fact!.factId], fact!.evidenceIds);
   },
 
-  "AC-SEO-BODY-AMOUNT": () => unknown(NO_PROFILE),
+  "AC-SEO-BODY-AMOUNT": () => uncalibrated(),
 
   "AC-SEO-INTERNAL-CRAWL": input => {
     const fact = f(input, "link.internal");
@@ -202,13 +209,13 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
   },
 
   "AC-SEO-DATE-APPLICABLE": input => {
-    if (input.pageType.type === "UNKNOWN") return unknown("page-type-unknown", input.pageType.evidenceIds);
+    if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown", input.pageType.evidenceIds);
     const applicable = input.pageType.type === "ARTICLE_BLOG" || input.pageType.type === "DOCUMENTATION";
     return result("PASS", `applicable:${applicable}`, [], input.pageType.evidenceIds);
   },
 
   "AC-SEO-DATE-PRESENT": input => {
-    if (input.pageType.type === "UNKNOWN") return unknown("page-type-unknown-cannot-determine-date-applicability", input.pageType.evidenceIds);
+    if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown-cannot-determine-date-applicability", input.pageType.evidenceIds);
     const dateRelevant = input.pageType.type === "ARTICLE_BLOG" || input.pageType.type === "DOCUMENTATION";
     if (!dateRelevant) return na("date-not-required-for-page-type", [], input.pageType.evidenceIds);
     const fact = f(input, "date.signal");

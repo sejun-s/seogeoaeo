@@ -3,9 +3,7 @@
   "configurations": [
     {
       "name": "citegraph-app",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "기획문서/citegraph-app", "run", "dev"],
-      "port": 3000
+      "url": "http://localhost:3001"
     }
   ]
 }

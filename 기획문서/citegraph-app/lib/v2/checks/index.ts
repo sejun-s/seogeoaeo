@@ -25,7 +25,7 @@ export function runAtomicCheck(atomicCheckId: string, index: FactIndex, pageType
     return {
       atomicCheckId,
       state: "UNKNOWN",
-      rationaleCode: "unknown-atomic-check-id",
+      rationaleCode: "UNSUPPORTED:unknown-atomic-check-id",
       factIds: [],
       evidenceIds: [],
       engineType: "FACT",
@@ -61,7 +61,7 @@ export function runAtomicCheck(atomicCheckId: string, index: FactIndex, pageType
     return {
       atomicCheckId,
       state: "UNKNOWN",
-      rationaleCode: applicability.reason,
+      rationaleCode: `CLASSIFICATION_UNCERTAIN:${applicability.reason}`,
       factIds: [],
       evidenceIds: pageType.evidenceIds,
       engineType: def.engineType,
@@ -74,7 +74,7 @@ export function runAtomicCheck(atomicCheckId: string, index: FactIndex, pageType
     return {
       atomicCheckId,
       state: "UNKNOWN",
-      rationaleCode: "evaluator-not-implemented",
+      rationaleCode: "UNSUPPORTED:evaluator-not-implemented",
       factIds: [],
       evidenceIds: [],
       engineType: def.engineType,

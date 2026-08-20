@@ -47,7 +47,7 @@ export const GEO_FACT_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
   "AC-GF-RENDERDEP": input => {
     const fact = f(input, "render.diff");
     const value = fact?.value as { hasRendered?: boolean; rawMainLength?: number } | undefined;
-    if (!value?.hasRendered) return unknown("no-rendered-snapshot", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
+    if (!value?.hasRendered) return unknown("UNSUPPORTED", "no-rendered-snapshot", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
     // rendered snapshot이 생기면(향후 renderer 도입 후) 여기서 raw/rendered 비율을 비교한다.
     return result("PASS", "render-dependency-low", [fact!.factId], fact!.evidenceIds);
   },
