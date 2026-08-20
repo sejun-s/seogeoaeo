@@ -3,31 +3,90 @@
 import { FormEvent, useState } from "react";
 import type { AuditResult, Rule, Score } from "../lib/audit";
 import type { AuditV2Dto } from "../lib/services/audit-v2-service";
-import { WorkspaceShell, useWorkspace } from "./workspace-shell";
+import { WorkspaceShell, useWorkspace, type ScanItem } from "./workspace-shell";
 import "./workspace.css";
 
 function percent(value: number | null) {
   return value === null ? "측정 불가" : `${Math.round(value * 100)}%`;
 }
 
+function CoverageGauge({
+  coverage,
+  domainType,
+}: {
+  coverage: number | null;
+  domainType: "seo" | "geo";
+}) {
+  const pct = coverage === null ? 0 : Math.round(coverage * 100);
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (pct / 100) * circumference;
+  const strokeColor = domainType === "seo" ? "var(--seo)" : "var(--geo)";
+
+  return (
+    <div
+      className="coverage-gauge"
+      title={`Coverage: ${percent(coverage)}`}
+      aria-label={`Coverage ${pct}%`}
+    >
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+        <circle
+          cx="22"
+          cy="22"
+          r={radius}
+          fill="none"
+          stroke="#e2e8f0"
+          strokeWidth="3.5"
+        />
+        <circle
+          cx="22"
+          cy="22"
+          r={radius}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth="3.5"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          transform="rotate(-90 22 22)"
+        />
+      </svg>
+      <span className="coverage-gauge-text">{pct}%</span>
+    </div>
+  );
+}
+
 function V2Domain({
   title,
   data,
+  domainType,
 }: {
   title: string;
   data: AuditV2Dto["seoFact"];
+  domainType: "seo" | "geo";
 }) {
   return (
-    <div className="v2-domain">
-      <div className="v2-domain-score">
+    <div className={`v2-domain v2-domain-${domainType}`}>
+      <div className="v2-domain-header">
         <div>
           <h3>{title}</h3>
           <p>{data.state}</p>
         </div>
-        <strong>
-          {data.score ?? "N/A"}
-          <small>{data.score === null ? "" : " / 100"}</small>
-        </strong>
+        <div className="v2-score-bundle">
+          <CoverageGauge
+            coverage={data.coverage.coverage}
+            domainType={domainType}
+          />
+          <div className="v2-score-numbers">
+            <strong>
+              {data.score ?? "N/A"}
+              <small>{data.score === null ? "" : " / 100"}</small>
+            </strong>
+            <span className="v2-coverage-badge">
+              Coverage {percent(data.coverage.coverage)}
+            </span>
+          </div>
+        </div>
       </div>
       <dl>
         <div>
@@ -92,8 +151,16 @@ function V2Section({ data }: { data: AuditV2Dto }) {
             </span>
           </div>
           <div className="v2-domains">
-            <V2Domain title="실험적 SEO Fact" data={data.seoFact} />
-            <V2Domain title="실험적 GEO Fact" data={data.geoFact} />
+            <V2Domain
+              title="실험적 SEO Fact"
+              data={data.seoFact}
+              domainType="seo"
+            />
+            <V2Domain
+              title="실험적 GEO Fact"
+              data={data.geoFact}
+              domainType="geo"
+            />
           </div>
           <div className="preparing-state">
             <strong>Semantic 분석 준비 중</strong>
@@ -432,7 +499,7 @@ function FindingRow({
 }
 
 function AuditWorkspace() {
-  const { projects, projectId, activeProject, refreshScans } = useWorkspace();
+  const { projects, projectId, activeProject, scans, refreshScans } = useWorkspace();
   const [url, setUrl] = useState("https://example.com");
   const [data, setData] = useState<AuditResult | null>(null);
   const [v2Data, setV2Data] = useState<AuditV2Dto | null>(null);
@@ -679,9 +746,96 @@ function AuditWorkspace() {
               ))}
             </dl>
           </section>
+
+          {activeProject && (
+            <ProjectScanTrend
+              scans={scans}
+              projectName={activeProject.name}
+            />
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+function ProjectScanTrend({
+  scans,
+  projectName,
+}: {
+  scans: ScanItem[];
+  projectName: string;
+}) {
+  const validScans = scans
+    .filter((s) => s.seoScore !== null && s.seoScore !== undefined)
+    .slice()
+    .reverse();
+
+  return (
+    <section className="scan-trend-section" aria-label="프로젝트 점수 이력 추이">
+      <div className="section-heading">
+        <div>
+          <p className="section-kicker">SCORE HISTORY</p>
+          <h2>{projectName} 점수 추이</h2>
+        </div>
+        {validScans.length >= 2 && (
+          <p className="trend-count">저장된 기록 {validScans.length}건</p>
+        )}
+      </div>
+      {validScans.length < 2 ? (
+        <div className="scan-trend-empty">
+          <strong>이력 부족</strong>
+          <p>
+            저장된 진단 결과가 2개 미만입니다 (현재 {validScans.length}건).
+            프로젝트에 진단 결과를 2회 이상 저장하면 시간축 점수 추이가 표시됩니다.
+          </p>
+        </div>
+      ) : (
+        <div className="trend-chart-container">
+          <div className="trend-legend">
+            <span className="legend-seo">
+              <i /> SEO Score
+            </span>
+            <span className="legend-geo">
+              <i /> GEO Fact
+            </span>
+          </div>
+          <div className="trend-timeline">
+            {validScans.map((scan, idx) => {
+              let path = "/";
+              try {
+                path = new URL(scan.finalUrl).pathname || "/";
+              } catch {
+                path = scan.finalUrl;
+              }
+              return (
+                <div key={scan.id || idx} className="trend-point-card">
+                  <time>
+                    {new Date(scan.createdAt).toLocaleDateString("ko-KR", {
+                      month: "numeric",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </time>
+                  <span className="trend-url" title={scan.finalUrl}>
+                    {path}
+                  </span>
+                  <div className="trend-scores">
+                    <span className="trend-score-seo">
+                      SEO <strong>{scan.seoScore ?? "—"}</strong>
+                    </span>
+                    <span className="trend-score-geo">
+                      GEO <strong>{scan.geoFactScore ?? "—"}</strong>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 

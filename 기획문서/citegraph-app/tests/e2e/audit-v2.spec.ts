@@ -118,7 +118,13 @@ test("v1과 v2 결과, evidence, 오류 상태 및 클립보드 복사 동작을
 
   const copiedSchemaText = await page.evaluate(() => navigator.clipboard.readText());
   expect(copiedSchemaText).toContain('"@context": "https://schema.org"');
-  expect(copiedSchemaText).toContain("Example Domain");
+  // 3단계 - Coverage 게이지 링 및 점수 묶음 UI 검증
+  await expect(page.locator(".coverage-gauge").first()).toBeVisible();
+  await expect(page.locator(".v2-score-bundle").first()).toBeVisible();
+  await expect(page.locator(".v2-coverage-badge").first()).toContainText("Coverage");
+
+  // 3단계 - 프로젝트 점수 이력 추이(SCORE HISTORY) 검증
+  await expect(page.getByText("SCORE HISTORY")).toBeVisible();
 
   const overflow = await page.evaluate(() => ({
     document: document.documentElement.scrollWidth - document.documentElement.clientWidth,

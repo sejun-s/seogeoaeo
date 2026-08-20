@@ -90,6 +90,15 @@
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
 
+### [v0.15.0-ui-enhancements] UI/UX 3단계 개선 완수 — 2026-08-20
+* **담당 AI**: Antigravity (Google DeepMind Team)
+* **사용 모델**: Gemini 3.7 Flash
+* **작업 내용**:
+  1. **1단계 (Shell 통일)**: `/compare` 및 홈 페이지 `WorkspaceShell` 공통 컴포넌트 적용, 반응형 overflow 0px 달성.
+  2. **2단계 (복사 가능한 개선사항)**: Finding 상세 내 Recommendation 텍스트 클립보드 복사 버튼, PageType 맞춤형 최소 유효 JSON-LD 스니펫(플레이스홀더 명시) 및 Canonical 태그 스니펫 동적 생성 및 원클릭 복사 기능 추가.
+  3. **3단계 (점수 시각화 & 이력 추이)**: v2 Fact 점수 옆 Coverage 원형 게이지 링(`CoverageGauge`) 결합 배치(낮은 Coverage를 점수와 시각적으로 일체화), Recent scans 기반 실제 저장된 점수 이력 시간축 추이(`ProjectScanTrend`) 렌더링 (이력 2개 미만 시 정직한 '이력 부족' 안내).
+* **검증 결과**: Vitest **108/108 PASS**, TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS** (클립보드 권한 기반 복사 검증 및 데스크톱 1440px / 모바일 390px 반응형 무결성 확인).
+
 ### [v2-eng-p4p5p6p7] 점수 신뢰도 개선 2차 구현 (P4~P7) — 2026-08-20
 * **담당 AI**: Antigravity (Google DeepMind Team)
 * **사용 모델**: Gemini 3.7 Flash

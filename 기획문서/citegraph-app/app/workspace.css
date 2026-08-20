@@ -71,6 +71,38 @@ body { background: var(--canvas); }
 .snippet-box h4 { margin: 0; }
 .snippet-code { background: var(--soft); border: 1px solid #edf0f2; border-radius: 3px; color: var(--ink); font: 11px/1.4 ui-monospace, monospace; margin: 6px 0 0; max-height: 180px; overflow-x: auto; padding: 8px 10px; white-space: pre-wrap; word-break: break-all; }
 
+.v2-domain-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 12px; }
+.v2-domain-header h3 { margin: 0 0 2px; }
+.v2-domain-header p { margin: 0; }
+.v2-score-bundle { display: flex; align-items: center; gap: 12px; }
+.coverage-gauge { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.coverage-gauge svg { position: absolute; top: 0; left: 0; }
+.coverage-gauge-text { font: 700 10px ui-monospace, monospace; color: var(--ink); }
+.v2-score-numbers { display: flex; flex-direction: column; align-items: flex-end; }
+.v2-score-numbers strong { font: 700 22px/1 ui-monospace, monospace; }
+.v2-score-numbers strong small { font-size: 11px; color: var(--muted); }
+.v2-coverage-badge { font: 10px ui-monospace, monospace; color: var(--muted); margin-top: 2px; }
+.v2-domain-seo .v2-score-numbers strong { color: var(--seo); }
+.v2-domain-geo .v2-score-numbers strong { color: var(--geo); }
+
+.scan-trend-section { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 22px 16px; margin-top: 14px; }
+.scan-trend-empty { padding: 20px; text-align: center; background: var(--soft); border: 1px dashed var(--line); border-radius: 4px; color: var(--muted); font-size: 12px; }
+.scan-trend-empty strong { display: block; margin-bottom: 4px; color: var(--ink); }
+.trend-count { font: 11px ui-monospace, monospace; color: var(--muted); margin: 0; }
+.trend-legend { display: flex; gap: 16px; font: 700 11px ui-monospace, monospace; margin-bottom: 12px; }
+.trend-legend span { display: flex; align-items: center; gap: 5px; }
+.trend-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; }
+.legend-seo i { background: var(--seo); }
+.legend-geo i { background: var(--geo); }
+.trend-timeline { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+.trend-point-card { background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; min-width: 140px; flex: 0 0 auto; display: flex; flex-direction: column; gap: 4px; }
+.trend-point-card time { font: 10px ui-monospace, monospace; color: var(--muted); }
+.trend-url { font: 11px ui-monospace, monospace; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+.trend-scores { display: flex; justify-content: space-between; font: 11px ui-monospace, monospace; margin-top: 4px; border-top: 1px solid #e2e8f0; padding-top: 4px; }
+.trend-score-seo strong { color: var(--seo); }
+.trend-score-geo strong { color: var(--geo); }
+
+
 /* 사이드바(248px)가 콘텐츠 폭을 그만큼 줄이는데, globals.css의 좁은 화면
    규칙은 700px에서만 켜진다. 그 사이(800~1440px대) 폭에서 score-section의
    고정 310px 컬럼과 finding-row의 minmax(300px,1fr)가 남은 폭보다 커져

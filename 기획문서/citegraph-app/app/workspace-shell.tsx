@@ -20,6 +20,8 @@ export interface ScanItem {
   id: string;
   finalUrl: string;
   createdAt: string;
+  seoScore?: number | null;
+  geoFactScore?: number | null;
 }
 
 interface WorkspaceContextType {
