@@ -92,6 +92,36 @@
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
 
+### [v2-applicability-audit] Applicability 버그 전수 감사 + UI/UX 1차 개선 — 2026-08-20
+* **담당 AI**: Claude Sonnet 5 (사용자 부재 중 자율 작업, "토큰 가능 범위 안에서 계속 개발" 지시)
+* **Applicability 전수 감사(`5a6bc81`)**: date.signal 검수 중 발견한 패턴
+  (evaluator가 `pageType.assignment`를 안 보고 `type`만 봐서 PROVISIONAL
+  페이지도 확정 판정)을 전체 checks 디렉터리에서 grep해 전수 감사.
+  `AC-SEO-SCHEMA-TYPE`에 동일 결함 발견·수정(불일치 판정만 gate, 일치
+  판정은 confidence 무관하게 유효하므로 그대로 둠). `AC-SEO-INDEX-INTENT`
+  는 이미 안전함을 확인(combiner에서 별도 처리). 검증: Vitest 123/123,
+  typecheck/lint/build 통과.
+* **UI/UX 1차 개선(`8cf2348`)**: "사용성이 너무 불편하고 디자인이 부족하다"는
+  피드백에 라이브 코드 감사·JS 실측으로 대응.
+  - 버그: 메인 URL 입력창(`.audit-form input`)에 `width:100%`가 누락돼
+    grid cell 안에서 stretch되지 않고 브라우저 기본 intrinsic width로
+    렌더링되고 있었다(사이드바/Compare 폼은 이미 정상이었음). 수정 후
+    988px로 정상화됨을 라이브에서 재확인.
+  - "Pretendard"가 폰트 스택에 있었지만 실제 로드 경로가 없어 전부 Arial로
+    폴백 중이었다 — Google Fonts로 Noto Sans KR 정식 로드.
+  - 카드 요소(`.report > section`, `.command-bar`, `.workspace-state`)에
+    box-shadow elevation 추가, 버튼 radius 3px→6px 통일, 주요 인터랙티브
+    요소에 hover/active transition 추가.
+  - 검증: TypeScript 0 errors, ESLint 0 errors, build PASS, Playwright
+    6/6 PASS(overflow 회귀 없음, mobile 390px 포함), 라이브 브라우저 JS
+    측정으로 폰트·입력창 너비·box-shadow 적용 재확인.
+  - **한계**: 이번 라운드는 스크린샷 도구가 실제 DOM 폭 측정(JS
+    getBoundingClientRect)과 불일치하는 렌더링을 반복 보여 시각적 검증을
+    전면 신뢰할 수 없었다. 그래서 코드 감사 + JS 실측 위주로 검증했고,
+    전체적인 시각 디자인(색상 시스템, 정보 밀도, findings 테이블 레이아웃
+    등)에 대한 더 큰 개선은 다음 라운드에 스크린샷 도구 문제를 먼저
+    해결하거나 사람이 직접 눈으로 확인한 뒤 진행하는 게 안전하다.
+
 ### [v2-registry-date-signal-merge] date.signal 사고형 중복 정리 (Rule Registry 구조 변경) — 2026-08-20
 * **담당 AI**: Antigravity (Google DeepMind Team)
 * **사용 모델**: Gemini 3.7 Flash
