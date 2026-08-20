@@ -78,7 +78,7 @@
 | **Shadow Mode 리포트(비-정본)**| [`v1-v2-shadow-mode-comparison-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/v1-v2-shadow-mode-comparison-report-2026-08-20.md) | 2026.08.20-v1.1 | **검증 완료(Claude 재검증)** | §5 P7 산출물. v1 vs v2 Fact(+Coverage) vs Human Label 3원 통합 비교 및 v2 공식 승격을 위한 4대 Gate 질문 정의. v1.0의 v2 SEO/GEO Fact 점수 숫자가 실제 실행 결과와 근거 없이 달랐음(원본 문서엔 애초에 없던 값)을 발견해 19개 URL 직접 재실행으로 전량 교체 |
 | **기획안(상위 대체됨)** | [`score-reliability-improvement-plan-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20.md) | v1 | **상위 대체됨** | Claude 제출 초안. 코덱스 검토를 반영한 v2-final로 대체됨. 히스토리 보존용으로만 유지 |
 | **점수 신뢰도 기획 최종안** | [`score-reliability-improvement-plan-2026-08-20-v2-final.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20-v2-final.md) | v2-final | **구현 착수 기준** | Claude 초안 + 코덱스 검토를 Claude가 재검증(코드 대조)해 통합한 최종 기획안. §5 P1~P7이 이번 라운드 구현 범위(Page Type Signal Family, UNKNOWN reason taxonomy, Registry Fact Dependency Audit 등)를 정의한다. v1 rule 변경·v2 공식 승격은 미승인 |
-| **Registry 감사 결과(비-정본)** | [`registry-fact-dependency-audit-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/registry-fact-dependency-audit-2026-08-20.md) | 2026-08-20 | **검증 완료** | 위 기획안 §5 P3 산출물. `date.signal`은 SEO/GEO 두 축에서 사실상 동일한 판정 로직으로 중복 계산됨(사고형 중복, 병합 검토 대상), `content.main_text`는 다각도 사용으로 문제 없음을 코드 대조로 확인. Rule Weight 변경 없음(리포트까지만) |
+| **Registry 감사 결과(비-정본)** | [`registry-fact-dependency-audit-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/registry-fact-dependency-audit-2026-08-20.md) | 2026-08-20 | **구현 완료** | `date.signal`의 사고형 중복(AC-GF-DATE vs AC-SEO-DATE-PRESENT) 해소 완료. AC-GF-DATE를 완전 제거하고 SR-GF-AUTHOR-DATE가 AC-SEO-DATE-PRESENT를 재사용하도록 통합. Weight 불변(SEO 100 / GEO 40 유지) 및 sharedAtomicChecks 계약 갱신 |
 | **Stage 0 감사(비-정본)** | [`CURRENT_PRODUCT_MAP.md`](file:///c:/workspace/seogeoaeo/CURRENT_PRODUCT_MAP.md) | 2026.08.19-v1.2 | **기획 검토안** | 2026-08-19 | 현재 UI·API·엔진·저장·테스트·운영 경로 지도 |
 | **Stage 0 감사(비-정본)** | [`FEATURE_GAP_MATRIX.md`](file:///c:/workspace/seogeoaeo/FEATURE_GAP_MATRIX.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | 후보 130개 전체 상태·8차원 평가·채택 권고 |
 | **Stage 0 감사(비-정본)** | [`DATA_RELIABILITY_AUDIT.md`](file:///c:/workspace/seogeoaeo/DATA_RELIABILITY_AUDIT.md) | 2026.08.19-v1.1 | **기획 검토안** | 2026-08-19 | 점수·Evidence·재현성·실패 처리 감사 |
@@ -91,6 +91,22 @@
 ---
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
+
+### [v2-registry-date-signal-merge] date.signal 사고형 중복 정리 (Rule Registry 구조 변경) — 2026-08-20
+* **담당 AI**: Antigravity (Google DeepMind Team)
+* **사용 모델**: Gemini 3.7 Flash
+* **경위**: Claude의 2순위 작업 지시(`gemini-prompt-date-signal-merge`)에 따라 `date.signal` Fact를 중복 평가하던 `AC-GF-DATE`를 완전 제거하고, `SR-GF-AUTHOR-DATE`가 `AC-SEO-DATE-PRESENT`를 재사용하도록 Scoring Rule Registry 구조 개편.
+* **구현 내용**:
+  1. `lib/v2/registry/scoring-rules.ts`: `SR-GF-AUTHOR-DATE`의 `atomicChecks`를 `["AC-GF-AUTHOR", "AC-SEO-DATE-PRESENT"]`로 갱신 (Weight 5 유지).
+  2. `lib/v2/registry/atomic-checks.ts`: `GEO_FACT_ATOMIC_CHECKS`에서 `AC-GF-DATE` 완전 삭제 (전체 Atomic Checks: 61개 → 60개, AC-GF- prefix: 12개 → 11개).
+  3. `lib/v2/checks/geo-fact.ts`: `GEO_FACT_CHECK_EVALUATORS["AC-GF-DATE"]` evaluator 완전 제거 (orphan 없음).
+  4. **적용성(Applicability) 메커니즘 검증**:
+     - `AC-SEO-DATE-PRESENT`는 evaluator 내부에서 `pageType.type` 기반으로 분기(`UNKNOWN` -> `UNCERTAIN`, 비-기사/문서 -> `N_A`, 기사/문서 -> 실측 판정).
+     - F05(날짜 결측 article) 등 `PROVISIONAL` 상태인 기사/문서 fixture에서 날짜 결측(`FAIL`)이 정상 감점되어 `SEO: F03 (96) > F05 (92)` 순서 보장 확인.
+* **검증 결과**:
+  1. `tests/v2/registry.test.ts`: 60개 checks, 11개 AC-GF-, `sharedAtomicChecks`에 `AC-SEO-DATE-PRESENT` 추가(SR-SEO-DATE 3 + SR-GF-AUTHOR-DATE 5 = 8pt 노출) 불변식 갱신 완료.
+  2. Vitest: **121/121 PASS** (14개 테스트 파일 전체 통과, 15개 HTML 픽스처 회귀 0건).
+  3. TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
 
 ### [v2-page-type-category-listing] CATEGORY_LISTING Page Type 신호 추가 — 2026-08-20
 * **담당 AI**: Antigravity (Google DeepMind Team)

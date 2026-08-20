@@ -83,7 +83,6 @@ export const GEO_FACT_ATOMIC_CHECKS: readonly AtomicCheckDef[] = define([
   { id: "AC-GF-RENDERDEP", question: "핵심 본문이 rendering에 과도하게 의존하는가", engine: "FACT", grade: "C", status: "EXPERIMENTAL", facts: ["render.diff"] },
   { id: "AC-GF-ACCESS", question: "접근 장벽이 핵심 본문을 막는가", engine: "FACT", grade: "C", status: "ACTIVE", facts: ["access.barrier", "http.status"], excludedFrom: ["UTILITY_AUTH"], naReason: "의도적으로 비공개인 화면" },
   { id: "AC-GF-AUTHOR", question: "저자/검토자 identity가 있는가", engine: "FACT", grade: "C", status: "ACTIVE", facts: ["author.signal"], appliesTo: ["ARTICLE_BLOG", "DOCUMENTATION"], naReason: "저자 책임이 요구되지 않는 page type" },
-  { id: "AC-GF-DATE", question: "typed date provenance가 있는가", engine: "FACT", grade: "C", status: "ACTIVE", facts: ["date.signal"], appliesTo: ["ARTICLE_BLOG", "DOCUMENTATION"], naReason: "시간에 민감하지 않은 page type" },
   { id: "AC-GF-PUBLISHER", question: "publisher identity signal이 있는가", engine: "FACT", grade: "C", status: "ACTIVE", facts: ["publisher.signal"] },
   { id: "AC-GF-CITEURL", question: "citation candidate가 유효 HTTP(S) URL인가", engine: "FACT", grade: "A", status: "ACTIVE", facts: ["link.external_citation"], naReason: "검증 가능한 claim이 없는 화면" },
   { id: "AC-GF-CITEPROX", question: "citation이 claim candidate 가까이에 있는가", engine: "FACT", grade: "D", status: "EXPERIMENTAL", facts: ["citation.relation", "claim.candidate"], naReason: "검증 가능한 claim이 없는 화면" },

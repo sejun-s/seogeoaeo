@@ -27,3 +27,4 @@ outputs/
 test-results/
 .local-corpus/
 scratch/
+next-env.d.ts

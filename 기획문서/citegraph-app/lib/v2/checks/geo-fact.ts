@@ -66,13 +66,6 @@ export const GEO_FACT_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
     return result(fact?.status === "PRESENT" ? "PASS" : "FAIL", fact?.status === "PRESENT" ? "author-present" : "author-absent", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
   },
 
-  "AC-GF-DATE": input => {
-    const fact = f(input, "date.signal");
-    if (fact?.status === "PRESENT") return result("PASS", "date-provenance-typed", [fact.factId], fact.evidenceIds);
-    if (fact?.status === "INVALID") return result("WARN", "date-provenance-partial", [fact.factId], fact.evidenceIds);
-    return result("FAIL", "date-provenance-absent", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
-  },
-
   "AC-GF-PUBLISHER": input => {
     const fact = f(input, "publisher.signal");
     return result(fact?.status === "PRESENT" ? "PASS" : "FAIL", fact?.status === "PRESENT" ? "publisher-present" : "publisher-absent", fact ? [fact.factId] : [], fact?.evidenceIds ?? []);
