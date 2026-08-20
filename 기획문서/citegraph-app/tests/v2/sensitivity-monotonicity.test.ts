@@ -97,8 +97,14 @@ async function evaluate(html: string, url = BASE_URL) {
 describe("P4: Sensitivity / Monotonicity 테스트 인프라", () => {
   describe("개별 Fact 변경에 대한 감도(Sensitivity) 및 상한선 검증", () => {
     it("Author 추가 시 GEO 점수는 비감소하며 상한선을 넘지 않는다", async () => {
-      const baselineHtml = createHtml({ author: undefined });
-      const withAuthorHtml = createHtml({ author: "Dr. Alice Smith" });
+      // 검수 중 발견: SR-GF-AUTHOR-DATE는 AC-GF-AUTHOR와 AC-GF-DATE를
+      // worst-of(combineGeneric)로 묶는다. 두 변형 모두 datePublished가
+      // 없으면 AC-GF-DATE가 항상 FAIL이라 rule 결과가 author 유무와
+      // 무관하게 FAIL로 고정되고 delta가 항상 0이 되어(실측 확인) author의
+      // 효과를 전혀 검증하지 못했다. 두 변형 모두 date를 PASS로 고정해
+      // author만 격리한다.
+      const baselineHtml = createHtml({ author: undefined, datePublished: "2026-08-01" });
+      const withAuthorHtml = createHtml({ author: "Dr. Alice Smith", datePublished: "2026-08-01" });
 
       const baseline = await evaluate(baselineHtml);
       const updated = await evaluate(withAuthorHtml);
@@ -107,15 +113,16 @@ describe("P4: Sensitivity / Monotonicity 테스트 인프라", () => {
       const updatedGeo = updated.geoFact.score ?? 0;
       const delta = updatedGeo - baselineGeo;
 
-      // Monotonicity: 유익한 author 추가 시 점수가 감소하면 안 됨
-      expect(delta).toBeGreaterThanOrEqual(0);
+      // author 격리 후에는 실제로 신호가 잡혀야 한다(회귀 시 이 assert가 깨진다).
+      expect(delta).toBeGreaterThan(0);
       // Sensitivity 상한선: 단일 author 변경으로 인한 점수 급변(예: 30점 이상 급등) 방지
       expect(delta).toBeLessThanOrEqual(25);
     });
 
     it("Date(발행일/수정일) 추가 시 SEO 및 GEO 점수는 비감소한다", async () => {
-      const baselineHtml = createHtml({ datePublished: undefined });
-      const withDateHtml = createHtml({ datePublished: "2026-08-15" });
+      // 위와 같은 이유로 author를 두 변형 모두 PASS로 고정해 date만 격리한다.
+      const baselineHtml = createHtml({ author: "Baseline Author", datePublished: undefined });
+      const withDateHtml = createHtml({ author: "Baseline Author", datePublished: "2026-08-15" });
 
       const baseline = await evaluate(baselineHtml);
       const updated = await evaluate(withDateHtml);
@@ -130,7 +137,8 @@ describe("P4: Sensitivity / Monotonicity 테스트 인프라", () => {
 
       // Monotonicity: 날짜 정보 추가 시 감점되지 않음
       expect(seoDelta).toBeGreaterThanOrEqual(0);
-      expect(geoDelta).toBeGreaterThanOrEqual(0);
+      // author 격리 후에는 실제로 신호가 잡혀야 한다.
+      expect(geoDelta).toBeGreaterThan(0);
       // Sensitivity 상한: 단일 date 변경이 전체 점수를 과도하게 왜곡하지 않음
       expect(seoDelta).toBeLessThanOrEqual(20);
       expect(geoDelta).toBeLessThanOrEqual(25);
@@ -154,8 +162,16 @@ describe("P4: Sensitivity / Monotonicity 테스트 인프라", () => {
     });
 
     it("Canonical 태그 제거 시 SEO 점수는 하락한다", async () => {
+      // 검수 중 발견: createHtml의 구조분해 기본값(`canonical = "..."`)은
+      // 호출부가 `canonical: undefined`를 명시적으로 넘겨도 기본값으로
+      // 대체된다(JS 구조분해 기본값 규칙 — 값이 undefined면 기본값이
+      // 적용된다). 그 결과 "제거" 변형에도 canonical이 그대로 남아 두
+      // HTML이 완전히 동일했고 delta가 항상 0이 되어(실측 확인) 아무것도
+      // 검증하지 못했다. title 제거 테스트가 이미 썼던 것과 같은 방식으로
+      // 빈 문자열을 넘겨 기본값 대체를 우회한다(템플릿의 `canonical ? ... : ""`
+      // 조건이 falsy를 정상적으로 "없음"으로 취급한다).
       const baselineHtml = createHtml({ canonical: "https://example.com/blog/how-to-optimize-seo" });
-      const withoutCanonicalHtml = createHtml({ canonical: undefined });
+      const withoutCanonicalHtml = createHtml({ canonical: "" });
 
       const baseline = await evaluate(baselineHtml);
       const updated = await evaluate(withoutCanonicalHtml);
@@ -164,8 +180,8 @@ describe("P4: Sensitivity / Monotonicity 테스트 인프라", () => {
       const updatedSeo = updated.seo.score ?? 0;
       const delta = updatedSeo - baselineSeo;
 
-      // Canonical 제거 시 감점 또는 비증가
-      expect(delta).toBeLessThanOrEqual(0);
+      // 실제로 제거된 후에는 감점이 관측돼야 한다(회귀 시 이 assert가 깨진다).
+      expect(delta).toBeLessThan(0);
       expect(Math.abs(delta)).toBeLessThanOrEqual(20);
     });
 

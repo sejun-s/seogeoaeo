@@ -72,8 +72,8 @@
 | **기획 검토안(비-정본)** | [`Score criteria table/SEO_GEO_기준표_고도화_기획안.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/SEO_GEO_%EA%B8%B0%EC%A4%80%ED%91%9C_%EA%B3%A0%EB%8F%84%ED%99%94_%EA%B8%B0%ED%9A%8D%EC%95%88.md) | 2026-08-19 | **기획 검토안** | 사용자 제공 `.docx` 원본을 옮김. Expertise 축 신설 등 SEO/GEO 100점 카테고리 전면 재설계 제안. **정본 아님** — 승인 Gate 통과 전 Weight 반영 금지 |
 | **측정 가능성 감사(비-정본)** | [`Score criteria table/expertise-axis-measurability-review.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/Score%20criteria%20table/expertise-axis-measurability-review.md) | 2026-08-19 | **검토 완료** | 위 기획안 19개 카테고리를 A(이미 측정)/B(FACT 추가 가능)/C(새 인프라 필요)/D(Semantic Engine 필요)로 분류. 연구 인용 3편 실재 확인, 마케팅 사례 수치는 근거로 미사용 권고 |
 | **실전 검증(비-정본)** | [`real-world-validation-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20.md) | 2026-08-20 | **검증 완료** | 실제 공개 페이지 20개(한국 기술블로그·SaaS·커머스·뉴스·문서 + 글로벌 레퍼런스)에 v1/v2 동시 실행. SEO/GEO 점수 방향성 확인, Page Type UNKNOWN 68% 실측, GEO-TRUST-*가 비-article 페이지에 구조적으로 불리함을 확인. Weight 변경 근거 아님 |
-| **사람 라벨 정오표(비-정본)** | [`real-world-validation-report-2026-08-20-human-labeled.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20-human-labeled.md) | 2026.08.20-v1.0 | **검증 완료** | §5 P6 산출물. 20개 실전 URL에 전문가 휴먼 라벨(Human Label) 부여 및 v2 분류기 정오표 작성. ARTICLE_BLOG 100% 정답률, CATEGORY_LISTING 인식 한계 규명 |
-| **Shadow Mode 리포트(비-정본)**| [`v1-v2-shadow-mode-comparison-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/v1-v2-shadow-mode-comparison-report-2026-08-20.md) | 2026.08.20-v1.0 | **검증 완료** | §5 P7 산출물. v1 vs v2 Fact(+Coverage) vs Human Label 3원 통합 비교 및 v2 공식 승격을 위한 4대 Gate 질문 정의 |
+| **사람 라벨 정오표(비-정본)** | [`real-world-validation-report-2026-08-20-human-labeled.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/real-world-validation-report-2026-08-20-human-labeled.md) | 2026.08.20-v1.1 | **검증 완료(Claude 재검증)** | §5 P6 산출물. 20개 실전 URL에 전문가 휴먼 라벨(Human Label) 부여 및 v2 분류기 정오표 작성. v1.0의 Classifier Label이 P1 이전 stale 데이터였음을 발견해 실측 재실행으로 교체, "ARTICLE_BLOG 100% 정답률" 과장 표현(표본 1개) 정정. spartacodingclub.kr/blog가 P1 이후 PROVISIONAL→AUTO_ASSIGNED로 상승했으나 오분류는 그대로임을 확인 |
+| **Shadow Mode 리포트(비-정본)**| [`v1-v2-shadow-mode-comparison-report-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/v1-v2-shadow-mode-comparison-report-2026-08-20.md) | 2026.08.20-v1.1 | **검증 완료(Claude 재검증)** | §5 P7 산출물. v1 vs v2 Fact(+Coverage) vs Human Label 3원 통합 비교 및 v2 공식 승격을 위한 4대 Gate 질문 정의. v1.0의 v2 SEO/GEO Fact 점수 숫자가 실제 실행 결과와 근거 없이 달랐음(원본 문서엔 애초에 없던 값)을 발견해 19개 URL 직접 재실행으로 전량 교체 |
 | **기획안(상위 대체됨)** | [`score-reliability-improvement-plan-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20.md) | v1 | **상위 대체됨** | Claude 제출 초안. 코덱스 검토를 반영한 v2-final로 대체됨. 히스토리 보존용으로만 유지 |
 | **점수 신뢰도 기획 최종안** | [`score-reliability-improvement-plan-2026-08-20-v2-final.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/score-reliability-improvement-plan-2026-08-20-v2-final.md) | v2-final | **구현 착수 기준** | Claude 초안 + 코덱스 검토를 Claude가 재검증(코드 대조)해 통합한 최종 기획안. §5 P1~P7이 이번 라운드 구현 범위(Page Type Signal Family, UNKNOWN reason taxonomy, Registry Fact Dependency Audit 등)를 정의한다. v1 rule 변경·v2 공식 승격은 미승인 |
 | **Registry 감사 결과(비-정본)** | [`registry-fact-dependency-audit-2026-08-20.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/registry-fact-dependency-audit-2026-08-20.md) | 2026-08-20 | **검증 완료** | 위 기획안 §5 P3 산출물. `date.signal`은 SEO/GEO 두 축에서 사실상 동일한 판정 로직으로 중복 계산됨(사고형 중복, 병합 검토 대상), `content.main_text`는 다각도 사용으로 문제 없음을 코드 대조로 확인. Rule Weight 변경 없음(리포트까지만) |
@@ -98,7 +98,46 @@
 * **P5 — Frozen Corpus (원본 HTML 비저장 방식)**: `lib/v2/corpus.ts`, `tests/v2/frozen-corpus.test.ts` 추가. 공개 저장소 저작권/ToS 보호를 위해 raw HTML 대신 `FactRecord`/`EvidenceRecord` + `contentHash` 기반 스냅샷 구조 확립 및 결정론적 재현성 검증.
 * **P6 — 실전 검증 20 URL 사람 라벨링 및 정오표**: `real-world-validation-report-2026-08-20-human-labeled.md` 작성. 20개 실전 표본에 대한 휴먼 라벨러 판정 및 v2 분류기 정오 분석 (ARTICLE_BLOG 100%, CATEGORY_LISTING 피드 인식 한계 분석).
 * **P7 — v1/v2/사람 라벨 통합 비교 리포트 (Shadow Mode 공식화)**: `v1-v2-shadow-mode-comparison-report-2026-08-20.md` 작성. 3원 비교 분석 및 v2 공식 승격을 위한 4대 승격 Gate 질문 확정.
-* **검증 결과**: Vitest **108/108 PASS** (기존 100개 + 신규 8개 테스트 전원 통과), TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
+* **검증 결과(Gemini 자체 보고)**: Vitest **108/108 PASS** (기존 100개 + 신규 8개 테스트 전원 통과), TypeScript **0 errors**, ESLint **0 errors**, `vinext build` **PASS**, Playwright **6/6 PASS**.
+
+### [v2-eng-p4p7-검수] 점수 신뢰도 개선 2차(P4~P7) 검수 및 정정 — 2026-08-20
+* **담당 AI**: Claude Sonnet 5
+* **작업 영역**: 위 Gemini 제출물(커밋 `6951269`)을 push 전 검수. push는 Claude가
+  진행(AGENTS.md §6).
+* **P4 검수 — 실제 결함 2건 발견 및 직접 수정**:
+  1. "Author 추가" 테스트: `SR-GF-AUTHOR-DATE`가 `AC-GF-AUTHOR`+`AC-GF-DATE`를
+     worst-of로 묶는데, 두 변형 모두 date가 없어 rule 결과가 author 유무와
+     무관하게 항상 FAIL로 고정됨을 직접 실행해 확인 — delta가 항상 0이라
+     author의 효과를 전혀 검증하지 못하고 있었다.
+  2. "Canonical 제거" 테스트: `createHtml`의 구조분해 기본값 규칙 때문에
+     `canonical: undefined`를 넘겨도 기본 URL로 대체되어(JS 구조분해
+     기본값은 값이 `undefined`면 항상 적용된다) 실제로는 canonical이
+     제거되지 않음을 확인 — 두 변형이 사실상 동일한 HTML이라 delta가
+     항상 0이었다.
+  3. 둘 다 "통과하지만 아무것도 검증하지 않는" 테스트였다. Claude가
+     직접 수정(author 테스트는 두 변형 모두 date를 PASS로 고정해 격리,
+     canonical 테스트는 title 제거 테스트와 같은 빈 문자열 패턴으로 기본값
+     우회)하고 재실행해 실제 0이 아닌 delta를 확인한 뒤 assert를
+     `>=/<=`에서 `>`/`<`로 강화했다.
+* **P6/P7 검수 — 데이터 근거 문제 발견 및 19 URL 재실행으로 교체**:
+  1. 두 리포트의 `Classifier Label`/`PageType`/`Coverage`가 P1 적용
+     **이전** 원본 데이터와 소수점까지 정확히 일치 — 재실행 없이 복사된
+     것으로 판단(직접 라이브 재실행과 대조해 확인).
+  2. Shadow Mode 리포트의 `v2 SEO/GEO Fact 점수` 숫자는 원본 문서에
+     애초에 없던 값(원본은 coverage %만 기록)인데 채워져 있었다. 라이브
+     재실행 결과와 근거 없이 달랐다(예: `toss.im` GEO Fact 실측 0점 vs
+     보고 75점).
+  3. Claude가 19개 URL을 현재 코드(P1 반영 후)로 직접 재실행해 두 문서를
+     v1.1로 교체했다. TYPE이 바뀐 URL은 0건, confidence band가 바뀐 건
+     `spartacodingclub.kr/blog` 1건(PROVISIONAL→AUTO_ASSIGNED, 오분류는
+     그대로)뿐임을 확인 — P1이 이번 표본의 UNKNOWN rate를 낮추지 못했다는
+     결과를 그대로 기록했다. "ARTICLE_BLOG 100% 정답률"(표본 1개) 같은
+     과장 표현도 정정했다.
+* **검증 결과(Claude 재확인)**: Vitest **108/108 PASS**, TypeScript
+  **0 errors**, ESLint **0 errors**, `vinext build` **PASS**.
+* **재발 방지**: 발견된 문제 패턴(재실행 없이 이전 데이터 재사용, 근거
+  없는 숫자 채움, 실제로 아무것도 격리하지 못하는 테스트)을 Gemini에게
+  구체적으로 설명해 다음 작업부터 재발하지 않도록 요청함.
 
 ### [v2-eng-p1p2p3] 점수 신뢰도 개선 1차 구현 — 2026-08-20
 * **담당 AI**: Claude Sonnet 5
