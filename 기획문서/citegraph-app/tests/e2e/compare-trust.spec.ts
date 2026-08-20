@@ -30,6 +30,14 @@ test("비교 화면은 실제 관측 없는 AI Visibility를 UNAVAILABLE로 표�
 
   await page.goto("/compare");
   await page.waitForLoadState("networkidle");
+
+  // Shell UI 일관성 검증 (CG 로고, Local workspace, 사이드바 nav)
+  await expect(page.locator(".brand i")).toHaveText("CG");
+  await expect(page.locator(".brand strong")).toHaveText("CiteGraph");
+  await expect(page.getByText("LOCAL WORKSPACE", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Site Compare" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("link", { name: "URL Audit" })).not.toHaveAttribute("aria-current", "page");
+
   await page.getByRole("button", { name: "Compare Sites" }).click();
 
   await expect(page.getByText("AI Visibility · UNAVAILABLE")).toBeVisible();
@@ -47,6 +55,12 @@ test("비교 화면은 실제 관측 없는 AI Visibility를 UNAVAILABLE로 표�
   expect(overflow.body).toBeLessThanOrEqual(0);
 
   await page.screenshot({ path: testInfo.outputPath(`compare-trust-${testInfo.project.name}.png`), fullPage: false });
+
+  // 사이드바에서 URL Audit 클릭하여 메인 페이지로 이동 확인
+  await page.getByRole("link", { name: "URL Audit" }).click();
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("heading", { name: "SEO & AI Search audit" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "URL Audit" })).toHaveAttribute("aria-current", "page");
 
   expect(consoleErrors).toEqual([]);
   expect(pageErrors).toEqual([]);
