@@ -173,8 +173,19 @@ export const SEO_CHECK_EVALUATORS: Record<string, CheckEvaluator> = {
       ContactPage: "CONTACT_ABOUT", AboutPage: "CONTACT_ABOUT",
     };
     const compatible = types.some(type => GENERIC.has(type) || TYPE_PAGE_MAP[type] === input.pageType.type);
+    // 일치(PASS)는 confidence와 무관하게 유효한 근거다 — 후보 type과 schema가
+    // 맞아떨어진다는 사실 자체는 PROVISIONAL이어도 그대로 신뢰할 수 있다.
+    // 반대로 "불일치(WARN)"는 우리가 추정한 page type이 틀렸을 가능성까지
+    // 떠안는 확정 판정이라, page type 자체가 확신 없는 상태에서 내리면 안
+    // 된다(date.signal 검수 중 발견한 것과 같은 패턴 — 전수 감사로 찾음).
     if (compatible) return result("PASS", "schema-type-compatible", [fact!.factId], fact!.evidenceIds);
     if (input.pageType.type === "UNKNOWN") return classificationUncertain("page-type-unknown-cannot-verify-compatibility", fact!.evidenceIds);
+    if (input.pageType.assignment !== "AUTO_ASSIGNED") {
+      return classificationUncertain(
+        `page-type-${input.pageType.assignment.toLowerCase()}-cannot-confirm-compatibility`,
+        fact!.evidenceIds,
+      );
+    }
     return result("WARN", "schema-type-page-type-mismatch", [fact!.factId], fact!.evidenceIds);
   },
 
