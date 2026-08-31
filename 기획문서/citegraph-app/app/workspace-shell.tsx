@@ -7,6 +7,7 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useSyncExternalStore,
 } from "react";
 import "./workspace.css";
 
@@ -175,6 +176,7 @@ export function WorkspaceShell({ currentPage, children }: WorkspaceShellProps) {
           <div className="mode">
             <i aria-hidden="true" />
             Local workspace · 2026.08.1
+            <ThemeToggle />
           </div>
         </header>
 
@@ -274,5 +276,69 @@ export function WorkspaceShell({ currentPage, children }: WorkspaceShellProps) {
         </div>
       </main>
     </WorkspaceContext.Provider>
+  );
+}
+
+/**
+ * 라이트/다크 테마 토글.
+ * - 초기값: <html data-theme> (layout의 no-flash 스크립트가 설정) →
+ *   없으면 OS 설정(prefers-color-scheme)을 따른다.
+ * - 선택은 localStorage("cg-theme")에 저장, 다음 방문에 유지.
+ * - 리포트 출력(인쇄/PDF)은 CSS print 경로에서 라이트 고정(후속 조각).
+ */
+/**
+ * 현재 유효 테마(다크 여부)를 외부 상태로 읽는다.
+ * data-theme 속성(no-flash 스크립트/토글이 설정) 우선, 없으면 OS 설정.
+ */
+function readDark(): boolean {
+  const attr = document.documentElement.getAttribute("data-theme");
+  if (attr === "dark") return true;
+  if (attr === "light") return false;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+}
+
+// useSyncExternalStore 구독: OS 테마 변경 + 우리 토글이 쏘는 커스텀 이벤트
+function subscribeTheme(onChange: () => void): () => void {
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  mq.addEventListener("change", onChange);
+  window.addEventListener("cg-theme-change", onChange);
+  return () => {
+    mq.removeEventListener("change", onChange);
+    window.removeEventListener("cg-theme-change", onChange);
+  };
+}
+
+function ThemeToggle() {
+  // 외부 가변 상태(DOM/localStorage/OS)를 effect-setState 없이 안전하게 읽는다.
+  // 서버 스냅샷은 항상 false(중립) → 하이드레이션 불일치를 React가 처리.
+  const isDark = useSyncExternalStore(
+    subscribeTheme,
+    readDark,
+    () => false,
+  );
+
+  function toggle() {
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("cg-theme", next);
+    } catch {
+      // localStorage 차단 환경: 저장만 생략, 전환은 유지
+    }
+    window.dispatchEvent(new Event("cg-theme-change"));
+  }
+
+  const label = isDark ? "라이트 모드로 전환" : "다크 모드로 전환";
+
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      onClick={toggle}
+      aria-label={label}
+      title={label}
+    >
+      {isDark ? "☀" : "☾"}
+    </button>
   );
 }
