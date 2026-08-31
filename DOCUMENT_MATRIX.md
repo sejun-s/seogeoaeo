@@ -47,7 +47,7 @@
 
 | 구분 | 마스터 문서명 (상세 경로) | 버전 | 상태 | 비고 |
 | :--- | :--- | :---: | :---: | :--- |
-| **운영 수칙** | [`AGENTS.md`](file:///c:/workspace/seogeoaeo/AGENTS.md) | **v1.0** | **최종 승인** | 프로젝트 코덱스, MOCK 금지, 원칙적 점수 산출 및 보안 지침 |
+| **운영 수칙** | [`AGENTS.md`](file:///c:/workspace/seogeoaeo/AGENTS.md) | **v1.1** | **최종 승인** | 프로젝트 코덱스, MOCK 금지, 원칙적 점수 산출 및 보안 지침. v1.1에서 §3.2 점수·평가 게이트(치명 결함 Gate, Coverage 미달 잠정 표기, 사이트 단위 일반화 금지, 신규 항목 측정가능성 감사 선행) 신설 |
 | **방법론 정본** | [`citegraph-scoring-methodology-v1.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-scoring-methodology-v1.md) | **v1.0** | **최종 승인** | 점수 산출 방법론, Heuristic 판정 결함 금지 원칙 |
 | **규칙 레지스트리** | [`citegraph-rule-registry-draft.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-rule-registry-draft.md) | **v1.0** | **최종 승인** | 정본 35개 진단 규칙 레지스트리 (SEO 18 + GEO 17) |
 | **가중치 캘리브레이션** | [`citegraph-weight-calibration-plan.md`](file:///c:/workspace/seogeoaeo/%EA%B8%B0%ED%9A%8D%EB%AC%B8%EC%84%9C/citegraph-weight-calibration-plan.md) | **v1.0** | **최종 승인** | 가중치 캘리브레이션 계획서 (§9 복합 점수 임의 결합 금지) |
@@ -91,6 +91,35 @@
 ---
 
 ## 📜 4. 버전 변경 이력 및 AI 작업 기록 (Integrated Changelog & AI Log)
+
+### [agents-v1.1-scoring-gates] AGENTS.md v1.1 — 점수·평가 게이트 4개 조항 신설 — 2026-08-31
+* **담당 AI**: Claude Opus 5 (사용자 승인 후 작업)
+* **변경 사유(Why)**: 사용자가 외부 AI(GPT) 의견을 바탕으로 평가체계 고도화 방향을
+  제시. 정본 문서와 전수 대조한 결과 제안의 대부분(SEO/AEO/GEO 3-Domain,
+  6축 점수 구조, Coverage·Confidence·Evidence 부착, Readiness/Performance 분리,
+  측정 유형별 ceiling, LLM 판정 루브릭화)은 `citegraph-saas-master-plan` §3~§5에
+  **이미 더 엄격한 형태로 존재**했다. 규약에 없던 것은 아래 4개 원칙뿐이었다.
+* **변경 내용(What)**:
+  - `AGENTS.md` §3을 §3.1(구현·데이터, 기존 10개 항목 불변)과 §3.2(점수·평가 게이트,
+    신설)로 분리. 기존 조항은 문구 변경 없음.
+  - §3.2 신설 4개 조항: ①치명 결함의 총점 흡수 금지(Gate 등급 상한)
+    ②Coverage 미달 시 확정 점수 대신 잠정 결과 표기 ③페이지 결과의 사이트 단위
+    일반화 금지 ④신규 평가 항목은 측정가능성 감사(A/B/C/D) 통과 전 ruleset 투입 금지
+  - `AGENTS.md`에 `DOCUMENT_MATRIX.md` §1① 필수 메타데이터 헤더 추가
+    (정본 문서면서 정작 자체 양식을 따르지 않고 있었음)
+* **의도적으로 하지 않은 것**:
+  - GPT 제안의 평가 항목 목록(약 60개)을 규약에 복사하지 않았다. `AGENTS.md` §1이
+    문서 간 목록 복제를 금지한다(중복 보유 시 한쪽만 갱신되어 어긋난 전례 있음).
+    분류 체계의 소유자는 마스터 플랜 §3.2이며 규약은 원칙만 보유한다.
+  - 제안 항목 중 `실무 경험의 증거`, `주장 정확성`, `정보 이득`, `상업적 편향` 등은
+    결정론적 측정이 불가하다. §3.2 ④조항에 따라 측정가능성 감사를 거쳐야 하며
+    이번 변경으로 ruleset에 투입되지 않았다.
+  - 사용자 지시로 GPT 제안서 원문은 저장소에 등록하지 않았다(참고용).
+* **영향 범위(Scope)**: 문서 전용. `rulesetVersion 2026.08.1`, 룰·가중치·엔진 코드
+  변경 없음. 점수 산출 결과 불변이므로 `SCORE_REVISION_HISTORY.md` 생성 대상 아님.
+* **후속 과제**: 제안 §5(사이트 단위 평가 — 주제 클러스터, 내부 링크 권위 흐름,
+  고립 페이지, 잠식 콘텐츠, 템플릿 공통 결함)는 현재 페이지 단위 엔진에 없는
+  기능으로 별도 기획안 필요. §3.2 ③조항이 그때까지 사이트 점수 산출을 차단한다.
 
 ### [v2-applicability-audit] Applicability 버그 전수 감사 + UI/UX 1차 개선 — 2026-08-20
 * **담당 AI**: Claude Sonnet 5 (사용자 부재 중 자율 작업, "토큰 가능 범위 안에서 계속 개발" 지시)
