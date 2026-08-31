@@ -698,8 +698,19 @@ function AuditWorkspace() {
                 <span />
               </div>
               {(() => {
+                // 심각도(FAIL 우선) → 가중치 내림차순으로 정렬한다.
+                // 근거·점수 로직은 그대로. 표시 순서만 안내문("가중치가
+                // 높은 WARN·FAIL 순서")과 일치시킨다.
+                const severityRank = { FAIL: 0, WARN: 1, PASS: 2 } as const;
+                const sorted = [...data.findings].sort((a, b) => {
+                  const bySeverity =
+                    (severityRank[a.result] ?? 3) -
+                    (severityRank[b.result] ?? 3);
+                  if (bySeverity !== 0) return bySeverity;
+                  return b.weight - a.weight;
+                });
                 let openFailCount = 0;
-                return data.findings.map((rule) => {
+                return sorted.map((rule) => {
                   const defaultOpen =
                     rule.result === "FAIL" && openFailCount < 3;
                   if (defaultOpen) openFailCount += 1;
