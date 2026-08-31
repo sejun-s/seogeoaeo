@@ -689,44 +689,68 @@ function AuditWorkspace() {
                 방법을 기본으로 펼쳐서 보여줍니다.
               </p>
             </div>
-            <div className="finding-table">
-              <div className="finding-table-head">
-                <span>Type</span>
-                <span>Rule</span>
-                <span>Weight</span>
-                <span>Result</span>
-                <span />
-              </div>
-              {(() => {
-                // 심각도(FAIL 우선) → 가중치 내림차순으로 정렬한다.
-                // 근거·점수 로직은 그대로. 표시 순서만 안내문("가중치가
-                // 높은 WARN·FAIL 순서")과 일치시킨다.
-                const severityRank = { FAIL: 0, WARN: 1, PASS: 2 } as const;
-                const sorted = [...data.findings].sort((a, b) => {
+            {(() => {
+              // 심각도(FAIL 우선) → 가중치 내림차순 정렬.
+              const severityRank = { FAIL: 0, WARN: 1, PASS: 2 } as const;
+              const sortBySeverity = (rules: typeof data.findings) =>
+                [...rules].sort((a, b) => {
                   const bySeverity =
                     (severityRank[a.result] ?? 3) -
                     (severityRank[b.result] ?? 3);
                   if (bySeverity !== 0) return bySeverity;
                   return b.weight - a.weight;
                 });
-                let openFailCount = 0;
-                return sorted.map((rule) => {
-                  const defaultOpen =
-                    rule.result === "FAIL" && openFailCount < 3;
-                  if (defaultOpen) openFailCount += 1;
-                  return (
-                    <FindingRow
-                      key={rule.id}
-                      rule={rule}
-                      defaultOpen={defaultOpen}
-                      extracted={data.extracted}
-                      finalUrl={data.finalUrl}
-                      pageType={v2Data?.pageType?.type}
-                    />
-                  );
-                });
-              })()}
-            </div>
+
+              // SEO / GEO 두 축으로 그룹화한다. 이 제품의 정체성(2축 분리)을
+              // findings에서도 시각적으로 유지한다. FAIL 자동 펼침은 축과
+              // 무관하게 상위 3개까지만.
+              let openFailCount = 0;
+              const groups = [
+                { type: "SEO" as const, label: "SEO", desc: "검색엔진 발견·색인·구조" },
+                { type: "GEO" as const, label: "GEO", desc: "AI 답변 준비도" },
+              ];
+
+              return groups.map((group) => {
+                const rules = sortBySeverity(
+                  data.findings.filter((r) => r.scoreType === group.type),
+                );
+                if (rules.length === 0) return null;
+                const failCount = rules.filter((r) => r.result === "FAIL").length;
+                const warnCount = rules.filter((r) => r.result === "WARN").length;
+                return (
+                  <div
+                    className={`finding-group ${group.type.toLowerCase()}`}
+                    key={group.type}
+                  >
+                    <div className="finding-group-head">
+                      <span className="finding-group-tag">{group.label}</span>
+                      <span className="finding-group-desc">{group.desc}</span>
+                      <span className="finding-group-count">
+                        {failCount > 0 && <em className="fg-fail">FAIL {failCount}</em>}
+                        {warnCount > 0 && <em className="fg-warn">WARN {warnCount}</em>}
+                      </span>
+                    </div>
+                    <div className="finding-table">
+                      {rules.map((rule) => {
+                        const defaultOpen =
+                          rule.result === "FAIL" && openFailCount < 3;
+                        if (defaultOpen) openFailCount += 1;
+                        return (
+                          <FindingRow
+                            key={rule.id}
+                            rule={rule}
+                            defaultOpen={defaultOpen}
+                            extracted={data.extracted}
+                            finalUrl={data.finalUrl}
+                            pageType={v2Data?.pageType?.type}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
           </section>
 
           {v2Data && <V2Section data={v2Data} />}
