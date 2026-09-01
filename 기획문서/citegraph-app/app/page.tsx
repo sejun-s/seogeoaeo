@@ -569,20 +569,52 @@ function AuditWorkspace() {
     await refreshScans(projectId);
   }
 
+  const isEmpty = !data && !error;
+
+  // 배경 글로우가 커서를 따라오게 한다(상태 없이 CSS 변수만 갱신 → 리렌더 없음).
+  function handleHeroPointer(event: React.PointerEvent<HTMLDivElement>) {
+    const el = event.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty("--mx", `${x}%`);
+    el.style.setProperty("--my", `${y}%`);
+  }
+  function handleHeroLeave(event: React.PointerEvent<HTMLDivElement>) {
+    const el = event.currentTarget;
+    el.style.setProperty("--mx", "50%");
+    el.style.setProperty("--my", "38%");
+  }
+
   return (
-    <div className="content audit-content">
-      <div className="page-title dashboard-title">
-        <div>
-          <p className="section-kicker">AUDIT WORKSPACE</p>
-          <h1>SEO & AI Search audit</h1>
-          <p>공개 페이지의 검색 기반과 생성형 검색 준비도를 근거 중심으로 진단합니다.</p>
+    <div
+      className={`content audit-content${isEmpty ? " audit-empty" : ""}`}
+      onPointerMove={isEmpty ? handleHeroPointer : undefined}
+      onPointerLeave={isEmpty ? handleHeroLeave : undefined}
+    >
+      {isEmpty ? (
+        <div className="audit-hero-head">
+          <p className="section-kicker">CITEGRAPH · SEO · GEO · AEO</p>
+          <h1>어떤 페이지를 분석할까요?</h1>
+          <p>
+            URL 하나로 검색엔진과 생성형 AI가 이 페이지를 어떻게 읽는지
+            근거와 함께 진단합니다.
+          </p>
         </div>
-        <div className="workspace-state">
-          <span>Analysis mode</span>
-          <strong>Deterministic</strong>
-          <small>REAL HTML · Ruleset 2026.08.1</small>
+      ) : (
+        <div className="page-title dashboard-title">
+          <div>
+            <p className="section-kicker">AUDIT WORKSPACE</p>
+            <h1>SEO & AI Search audit</h1>
+            <p>공개 페이지의 검색 기반과 생성형 검색 준비도를 근거 중심으로 진단합니다.</p>
+          </div>
+          <div className="workspace-state">
+            <span>Analysis mode</span>
+            <strong>Deterministic</strong>
+            <small>REAL HTML · Ruleset 2026.08.1</small>
+          </div>
         </div>
-      </div>
+      )}
       <form className="audit-form command-bar" onSubmit={run} id="audit">
         <label htmlFor="url">URL</label>
         <div>
@@ -590,10 +622,13 @@ function AuditWorkspace() {
             id="url"
             type="url"
             required
+            placeholder="https://example.com/blog/post"
             value={url}
             onChange={(event) => setUrl(event.target.value)}
           />
-          <button disabled={loading}>{loading ? "Analyzing…" : "Analyze"}</button>
+          <button disabled={loading} aria-label="분석 시작">
+            {loading ? "Analyzing…" : "Analyze"}
+          </button>
         </div>
         <p>
           {activeProject
